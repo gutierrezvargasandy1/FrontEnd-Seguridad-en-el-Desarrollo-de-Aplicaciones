@@ -1,0 +1,31 @@
+<div class="login-container">
+  <h2>Iniciar Sesión</h2>
+
+  <form (ngSubmit)="onLogin()">
+    
+    <div>
+      <label>Usuario</label>
+      <input 
+        type="text" 
+        [(ngModel)]="username" 
+        name="username" 
+        required
+      />
+    </div>
+
+    <div>
+      <label>Contraseña</label>
+      <input 
+        type="password" 
+        [(ngModel)]="password" 
+        name="password" 
+        required
+      />
+    </div>
+
+    <button type="submit">Entrar</button>
+
+    <button type="submit" [routerLink]="'/register'">Registrate</button>
+
+  </form>
+</div>

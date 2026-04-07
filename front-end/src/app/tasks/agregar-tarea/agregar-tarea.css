@@ -1,0 +1,85 @@
+/* Contenedor principal */
+.agregar-tarea-container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 25px 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Título del formulario */
+.agregar-tarea-container h2 {
+  color: #2c3e50; /* azul marino */
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Mensaje de error */
+.agregar-tarea-container .error {
+  background-color: #e74c3c;
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Formulario */
+.agregar-tarea-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Form group */
+.agregar-tarea-container .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Labels */
+.agregar-tarea-container label {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* Inputs y textarea */
+.agregar-tarea-container input,
+.agregar-tarea-container textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  resize: vertical;
+  transition: border-color 0.3s;
+}
+
+.agregar-tarea-container input:focus,
+.agregar-tarea-container textarea:focus {
+  outline: none;
+  border-color: #2c3e50; /* azul marino al enfocar */
+}
+
+/* Botón guardar */
+.agregar-tarea-container button[type="submit"] {
+  padding: 10px 15px;
+  background-color: #2c3e50; /* azul marino */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.agregar-tarea-container button[type="submit"]:hover {
+  background-color: #1a252f; /* más oscuro al pasar mouse */
+}
+
+.agregar-tarea-container button[disabled] {
+  background-color: #7f8c8d;
+  cursor: not-allowed;
+}

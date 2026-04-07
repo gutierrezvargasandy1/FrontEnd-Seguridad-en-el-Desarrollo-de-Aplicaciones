@@ -1,0 +1,73 @@
+/* Contenedor principal del login */
+.login-container {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 25px 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Título del login */
+.login-container h2 {
+  color: #2c3e50; /* azul marino */
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 22px;
+}
+
+/* Formulario */
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Grupo de inputs */
+.login-container div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Labels */
+.login-container label {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* Inputs */
+.login-container input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.login-container input:focus {
+  outline: none;
+  border-color: #2c3e50; /* azul marino al enfocar */
+}
+
+/* Botón de login */
+.login-container button[type="submit"] {
+  padding: 10px 15px;
+  background-color: #2c3e50; /* azul marino */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-container button[type="submit"]:hover {
+  background-color: #1a252f; /* más oscuro al pasar mouse */
+}
+
+.login-container button[disabled] {
+  background-color: #7f8c8d;
+  cursor: not-allowed;
+}

@@ -1,0 +1,33 @@
+<div class="task-container">
+  <h2>Actualizar Tarea</h2>
+
+  <form [formGroup]="taskForm" (ngSubmit)="submit()">
+
+    <div class="form-group">
+      <label>Nombre de la tarea</label>
+      <input type="text" formControlName="name">
+      <small *ngIf="taskForm.get('name')?.touched && taskForm.get('name')?.invalid">
+        El nombre es obligatorio
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea formControlName="description"></textarea>
+    </div>
+
+    <div class="form-group checkbox">
+      <label>
+        <input type="checkbox" formControlName="priority">
+        Prioritaria
+      </label>
+    </div>
+
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Guardando...' : 'Actualizar' }}
+    </button>
+
+    <p class="message">{{ message }}</p>
+
+  </form>
+</div>

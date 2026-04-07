@@ -1,0 +1,15 @@
+<div class="dashboard">
+
+  <nav>
+    <button [routerLink]="['/dashboard/tasks']" class="btn-nav">Tareas</button>
+    <button (click)="logout()">Salir</button>
+    <button [routerLink]="['/dashboard/tasks/nueva']" class="btn-agregar">+ Nueva Tarea</button>
+    <button class="btn-profile" routerLink="/dashboard/profile">Mi Perfil</button>
+
+  </nav>
+
+  <hr>
+
+  <router-outlet></router-outlet>
+   
+</div>

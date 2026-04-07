@@ -1,0 +1,32 @@
+<div *ngIf="user">
+  <h2>Actualizar Perfil</h2>
+
+  <form #form="ngForm" (ngSubmit)="updateProfile(form)">
+    
+    <div>
+      <label>Nombre</label>
+      <input type="text" name="name" [(ngModel)]="user.name" required />
+    </div>
+
+    <div>
+      <label>Apellido</label>
+      <input type="text" name="lastname" [(ngModel)]="user.lastname" required />
+    </div>
+
+    <div>
+      <label>Username</label>
+      <input type="text" name="username" [(ngModel)]="user.username" required />
+    </div>
+
+    <div>
+      <label>Contraseña</label>
+      <input type="password" name="password" [(ngModel)]="password" />
+    </div>
+
+    <button type="submit" [disabled]="loading">Actualizar</button>
+
+    <p *ngIf="successMessage" style="color: green">{{ successMessage }}</p>
+    <p *ngIf="errorMessage" style="color: red">{{ errorMessage }}</p>
+
+  </form>
+</div>

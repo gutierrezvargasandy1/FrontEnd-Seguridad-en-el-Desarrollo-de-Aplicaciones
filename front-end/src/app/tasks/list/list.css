@@ -1,0 +1,87 @@
+/* Contenedor principal */
+.tareas-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+/* Encabezado con título y botón */
+.tareas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+/* Botón de agregar tarea */
+.btn-agregar {
+  padding: 8px 14px;
+  font-size: 14px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-agregar:hover {
+  background-color: #45a049;
+}
+
+/* Lista de tareas */
+.tareas-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Cada item de tarea */
+.tarea-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #ccc;
+  background-color: white;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+/* Botón de eliminar tarea */
+.btn-eliminar {
+  padding: 4px 10px;
+  font-size: 12px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-eliminar:hover {
+  background-color: #d32f2f;
+}
+
+/* Para texto de la tarea */
+.tarea-item span {
+  flex: 1;
+  margin-right: 10px;
+  color: black;
+
+}
+
+.btn-update{  padding: 4px 10px;
+  font-size: 12px;
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  margin-right: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}

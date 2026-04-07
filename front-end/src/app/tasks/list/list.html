@@ -1,0 +1,13 @@
+<div class="tareas-container">
+  <div class="tareas-header">
+    <h2>Mis Tareas</h2>
+  </div>
+
+  <ul class="tareas-list">
+    <li *ngFor="let task of tasks" class="tarea-item">
+      <span [routerLink]="['/dashboard/tasks', task.id]" class="tarea-link">{{ task.name }}</span>
+      <button (click)="deleteTask(task.id)" class="btn-eliminar">Eliminar</button>
+      <button [routerLink]="['/dashboard/tasks/edit', task.id]" class="btn-update">Editar</button>
+    </li>
+  </ul>
+</div>

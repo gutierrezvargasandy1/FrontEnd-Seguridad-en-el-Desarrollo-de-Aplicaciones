@@ -1,0 +1,46 @@
+<div class="agregar-tarea-container">
+  <h2>Agregar Nueva Tarea</h2>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <form (ngSubmit)="agregarTarea()">
+
+    <!-- Campo Nombre -->
+    <div class="form-group">
+      <label for="name">Nombre de la tarea:</label>
+      <input 
+        id="name" 
+        [(ngModel)]="name" 
+        name="name" 
+        required 
+        placeholder="Escribe el nombre de la tarea"
+      />
+    </div>
+
+    <!-- Campo Descripción -->
+    <div class="form-group">
+      <label for="description">Descripción:</label>
+      <textarea 
+        id="description" 
+        [(ngModel)]="description" 
+        name="description" 
+        placeholder="Opcional"
+      ></textarea>
+    </div>
+
+    <!-- Checkbox Prioridad -->
+    <div class="form-group">
+      <label>
+        <input 
+          type="checkbox" 
+          [(ngModel)]="priority" 
+          name="priority"
+        /> Prioridad alta
+      </label>
+    </div>
+
+    <!-- Botón Guardar -->
+    <button type="submit" [disabled]="loading">Guardar</button>
+  </form>
+</div>

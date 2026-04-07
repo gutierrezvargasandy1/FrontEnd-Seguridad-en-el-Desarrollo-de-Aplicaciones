@@ -1,0 +1,57 @@
+/* Contenedor principal */
+.tarea-details-container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 25px 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Título de detalles */
+.tarea-details-container h2 {
+  color: #2c3e50; /* azul marino */
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Cada atributo de la tarea */
+.tarea-details-container p {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #2c3e50;
+  line-height: 1.5;
+}
+
+/* Etiquetas en negrita */
+.tarea-details-container p strong {
+  display: inline-block;
+  width: 120px;
+  font-weight: bold;
+}
+
+/* Botón volver */
+.tarea-details-container button {
+  margin-top: 20px;
+  padding: 10px 15px;
+  background-color: #2c3e50; /* azul marino */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.tarea-details-container button:hover {
+  background-color: #1a252f; /* más oscuro al pasar mouse */
+}
+
+.tarea-details-container button:disabled {
+  background-color: #7f8c8d;
+  cursor: not-allowed;
+}

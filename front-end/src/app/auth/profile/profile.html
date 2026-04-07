@@ -1,0 +1,15 @@
+<div class="profile-container" *ngIf="!loading && user">
+  <h2>Mi Perfil</h2>
+
+  <p><strong>ID:</strong> {{ user.id }}</p>
+  <p><strong>Nombre:</strong> {{ user.name }} {{ user.lastname }}</p>
+  <p><strong>Username:</strong> {{ user.username }}</p>
+  <p><strong>Creado:</strong> {{ user.created_at | date:'short' }}</p>
+
+  <button [routerLink]="['/dashboard/tasks']">Volver a tareas</button>
+  <button [routerLink]="['/dashboard/users/update']">Editar Perfil</button>
+
+</div>
+
+<div *ngIf="loading">Cargando perfil...</div>
+<div *ngIf="error">{{ error }}</div>
