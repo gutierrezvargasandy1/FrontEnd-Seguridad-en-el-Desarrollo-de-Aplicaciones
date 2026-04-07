@@ -23,7 +23,6 @@ export interface UpdateUserDto {
   name: string;
   lastname: string;
   username: string;
-  password: string;
 }
 
 @Injectable({
@@ -52,6 +51,18 @@ export class UserService {
   getUserById(id: number): Observable<User> {
     return this.http.get<User>(`${this.API}/${id}`, { withCredentials: true });
   }
+
+  getUsers() {
+  return this.http.get<User[]>(`${this.API}`, { withCredentials: true });
+}
+
+ deleteUser(id: number) {
+  return this.http.delete(`${this.API}/${id}`, { withCredentials: true });
+}
+
+updateUserById(id: number, dto: UpdateUserDto): Observable<User> {
+  return this.http.patch<User>(`${this.API}/${id}`, dto, { withCredentials: true });
+}
 
 
 }

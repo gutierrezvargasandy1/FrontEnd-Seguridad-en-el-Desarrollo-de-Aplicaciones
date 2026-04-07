@@ -1,7 +1,7 @@
-<div class="profile-container" *ngIf="!loading && user">
+<div class="user-detail-container" *ngIf="user">
   <div class="detail-header">
-    <h2>Mi Perfil</h2>
-    <button [routerLink]="['/dashboard/tasks']" class="btn-volver">← Volver</button>
+    <h2>Detalle de Usuario</h2>
+    <button routerLink="/dashboard/users" class="btn-volver">← Volver</button>
   </div>
 
   <div class="detail-avatar">
@@ -15,22 +15,22 @@
     </div>
     <div class="detail-row">
       <span class="detail-label">Username</span>
-      <span class="detail-value">@{{ user.username }}</span>
+      <span class="detail-value">{{ user.username }}</span>
     </div>
     <div class="detail-row">
       <span class="detail-label">ID</span>
       <span class="detail-value">#{{ user.id }}</span>
     </div>
     <div class="detail-row">
-      <span class="detail-label">Creado</span>
+      <span class="detail-label">Registrado</span>
       <span class="detail-value">{{ user.created_at | date:'mediumDate' }}</span>
     </div>
   </div>
 
   <div class="detail-footer">
-    <button [routerLink]="['/dashboard/users/update']" class="btn-editar">Editar Perfil</button>
+    <button (click)="deleteUser(user.id)" class="btn-eliminar">Eliminar Usuario</button>
   </div>
 </div>
 
-<div *ngIf="loading" class="loading-text">Cargando perfil...</div>
+<div *ngIf="loading" class="loading-text">Cargando usuario...</div>
 <div *ngIf="error" class="msg-error">{{ error }}</div>

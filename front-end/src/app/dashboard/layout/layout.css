@@ -1,84 +1,101 @@
-/* Dashboard container */
 .dashboard {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 20px;
-  background-color: #f4f6f8;
-  min-height: 100vh;
-}
-
-/* Navbar */
-.dashboard nav {
   display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
+  min-height: 100vh;
+  background-color: #f4f6f8;
 }
 
-/* Navbar links */
-.dashboard nav a {
-  text-decoration: none;
-  color: #1a1a1a;
-  font-weight: bold;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background 0.3s;
+.dashboard nav {
+  width: 220px;
+  min-height: 100vh;
+  background-color: #ffffff;
+  border-right: 1px solid #e2e2e2;
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
 }
 
-.dashboard nav a:hover {
-  background-color: #dfe3e8;
+.dashboard nav::before {
+  content: 'TaskBoard';
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #251f81;
+  padding: 28px 20px 24px;
+  border-bottom: 1px solid #eeeeee;
+  margin-bottom: 12px;
 }
 
-/* Buttons in navbar */
-.dashboard nav button {
-  padding: 8px 14px;
+.dashboard nav .btn-nav {
+  display: block;
+  padding: 11px 20px;
+  background: none;
   border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
-}
-
-/* Logout button */
-.dashboard nav button:nth-child(2) {
-  background-color: #e74c3c;
-  color: white;
-}
-
-.dashboard nav button:nth-child(2):hover {
-  background-color: #c0392b;
-}
-
-/* Nueva Tarea button */
-.dashboard nav .btn-agregar {
-  background-color: #2c3e50; /* azul marino */
-  color: white;
-}
-
-.dashboard nav .btn-agregar:hover {
-  background-color: #1a252f; /* más oscuro al pasar mouse */
-}
-
-/* Horizontal line */
-.dashboard hr {
-  border: none;
-  border-top: 1px solid #ccc;
-  margin: 15px 0;
-}
-
-/* BOTON PRIFILE */
-
-.btn-profile {
-  padding: 8px 14px;
+  border-left: 3px solid transparent;
+  text-align: left;
   font-size: 14px;
-  background-color: #2c3e50; /* azul marino */
-  color: white;
-  border: none;
-  border-radius: 5px;
+  font-weight: 400;
+  color: #555555;
   cursor: pointer;
-  transition: background-color 0.2s;
-  margin-left: 10px;
+  transition: background 0.15s, color 0.15s;
+  width: 100%;
 }
 
-.btn-profile:hover {
-  background-color: #1a252f; /* más oscuro al pasar mouse */
+.dashboard nav .btn-nav:hover {
+  background-color: #f5f5f5;
+  color: #1a1a1a;
+}
+
+.dashboard nav .btn-nav.active {
+  color: #251f81;
+  background-color: #eeedfe;
+  border-left: 3px solid #251f81;
+  font-weight: 500;
+}
+
+.dashboard hr {
+  display: none;
+}
+
+.dashboard nav button:not(.btn-nav):not(.btn-profile) {
+  display: block;
+  margin-top: auto;
+  padding: 11px 20px;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  text-align: left;
+  font-size: 14px;
+  color: #999999;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s, color 0.15s;
+}
+
+.dashboard nav button:not(.btn-nav):not(.btn-profile):hover {
+  background-color: #fff0f0;
+  color: #cc3333;
+}
+
+.dashboard nav .btn-profile {
+  display: block;
+  padding: 11px 20px;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  text-align: left;
+  font-size: 14px;
+  color: #555555;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s, color 0.15s;
+}
+
+.dashboard nav .btn-profile:hover {
+  background-color: #f5f5f5;
+  color: #251f81;
 }

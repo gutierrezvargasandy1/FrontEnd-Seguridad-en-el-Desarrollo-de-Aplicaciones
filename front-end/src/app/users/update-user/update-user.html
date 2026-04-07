@@ -1,4 +1,4 @@
-<div *ngIf="user">
+<div class="update-user-container" *ngIf="user">
   <h2>Actualizar Perfil</h2>
 
   <form #form="ngForm" (ngSubmit)="updateProfile(form)">
@@ -18,10 +18,6 @@
       <input type="text" name="username" [(ngModel)]="user.username" required />
     </div>
 
-    <div>
-      <label>Contraseña</label>
-      <input type="password" name="password" [(ngModel)]="password" />
-    </div>
 
     <button type="submit" [disabled]="loading">Actualizar</button>
 

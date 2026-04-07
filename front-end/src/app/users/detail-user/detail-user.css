@@ -1,6 +1,6 @@
 :host { display: block; width: 60%; }
 
-.profile-container {
+.user-detail-container {
   max-width: 560px;
   background: #ffffff;
   border: 1px solid #e8e8e8;
@@ -73,24 +73,21 @@
   color: #1a1a1a;
 }
 
-.detail-footer {
-  border-top: 1px solid #f0f0f0;
-  padding-top: 20px;
-}
+.detail-footer { border-top: 1px solid #f0f0f0; padding-top: 20px; }
 
-.btn-editar {
+.btn-eliminar {
   padding: 9px 18px;
   font-size: 13px;
   font-weight: 500;
-  background-color: #251f81;
-  color: white;
-  border: none;
+  background-color: #fcebeb;
+  color: #a32d2d;
+  border: 1px solid #f5c1c1;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, color 0.2s;
 }
 
-.btn-editar:hover { background-color: #1a1560; }
+.btn-eliminar:hover { background-color: #a32d2d; color: #ffffff; }
 
 .loading-text {
   font-size: 14px;

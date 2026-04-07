@@ -1,0 +1,21 @@
+/* styles.scss — GLOBAL */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f8;
+}
+
+/* Esto es la clave — empuja TODO componente hijo del router-outlet */
+router-outlet + * {
+  display: block;
+  margin-left: 220px;
+  padding: 36px 40px;
+  min-height: 100vh;
+  background-color: #f4f6f8;
+}

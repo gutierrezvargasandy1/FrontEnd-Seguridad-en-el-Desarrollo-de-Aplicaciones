@@ -9,6 +9,10 @@ import { Profile } from './auth/profile/profile';
 import { UpdateUser } from './users/update-user/update-user';
 import { Register } from './auth/register/register';
 import { UpdateTask } from './tasks/update-task/update-task';
+import { CreateUser } from './users/create-user/create-user';
+import { DetailUser } from './users/detail-user/detail-user';
+import { ListaUser } from './users/lista/lista';
+import { EditUser } from './users/edit-user/edit-user';
 
 const routes: Routes = [
   {path: 'login',component: Login},
@@ -22,6 +26,10 @@ const routes: Routes = [
       { path: 'tasks/:id', component: TareaDetails },
       { path: 'profile', component: Profile },
       { path: 'users/update',component: UpdateUser},
+      { path: 'users', component: ListaUser },
+      { path: 'users/edit/:id', component: EditUser },
+      { path: 'users/create', component: CreateUser },
+      { path: 'users/:id', component: DetailUser },
       { path: 'tasks/edit/:id', component: UpdateTask},
 
     ]

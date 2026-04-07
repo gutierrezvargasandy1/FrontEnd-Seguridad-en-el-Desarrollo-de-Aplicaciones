@@ -39,7 +39,6 @@ export class UpdateUser {
       name: this.user.name,
       lastname: this.user.lastname,
       username: this.user.username,
-      password: this.password
     };
 
     this.loading = true;

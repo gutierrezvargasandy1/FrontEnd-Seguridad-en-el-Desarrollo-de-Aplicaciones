@@ -1,6 +1,6 @@
 :host { display: block; width: 60%; }
 
-.profile-container {
+.edit-user-container {
   max-width: 560px;
   background: #ffffff;
   border: 1px solid #e8e8e8;
@@ -50,37 +50,59 @@
   margin-bottom: 24px;
 }
 
-.detail-body { margin-bottom: 28px; }
-
-.detail-row {
+.form-group {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 13px 0;
-  border-bottom: 1px solid #f0f0f0;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
 }
 
-.detail-row:last-child { border-bottom: none; }
-
-.detail-label {
+.form-group label {
   font-size: 13px;
-  color: #888888;
+  font-weight: 500;
+  color: #555555;
 }
 
-.detail-value {
+.form-group input {
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  font-family: inherit;
+  background-color: #fafafa;
+  color: #1a1a1a;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #251f81;
+  background-color: #ffffff;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.btn-cancelar {
+  padding: 10px 20px;
   font-size: 14px;
   font-weight: 500;
-  color: #1a1a1a;
+  background-color: #f4f4f4;
+  color: #555555;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.detail-footer {
-  border-top: 1px solid #f0f0f0;
-  padding-top: 20px;
-}
+.btn-cancelar:hover { background-color: #e8e8e8; }
 
-.btn-editar {
-  padding: 9px 18px;
-  font-size: 13px;
+.btn-guardar {
+  padding: 10px 24px;
+  font-size: 14px;
   font-weight: 500;
   background-color: #251f81;
   color: white;
@@ -90,19 +112,31 @@
   transition: background-color 0.2s;
 }
 
-.btn-editar:hover { background-color: #1a1560; }
+.btn-guardar:hover { background-color: #1a1560; }
+.btn-guardar:disabled { background-color: #aaaaaa; cursor: not-allowed; }
 
-.loading-text {
-  font-size: 14px;
-  color: #888888;
-  padding: 20px 0;
+.msg-success {
+  margin-top: 14px;
+  font-size: 13px;
+  color: #3b6d11;
+  background-color: #eaf3de;
+  border: 1px solid #c0dd97;
+  border-radius: 6px;
+  padding: 10px 14px;
 }
 
 .msg-error {
+  margin-top: 14px;
   font-size: 13px;
   color: #a32d2d;
   background-color: #fcebeb;
   border: 1px solid #f5c1c1;
   border-radius: 6px;
   padding: 10px 14px;
+}
+
+.loading-text {
+  font-size: 14px;
+  color: #888888;
+  padding: 20px 0;
 }
