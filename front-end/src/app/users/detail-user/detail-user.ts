@@ -20,14 +20,25 @@ export class DetailUser implements OnInit {
     private router: Router
   ) {}
 
+  private extractError(err: any): string {
+    try {
+      const body = typeof err.error === 'string' ? JSON.parse(err.error) : err.error;
+      const msg = body?.message;
+      if (Array.isArray(msg)) return msg[0];
+      if (typeof msg === 'string') return msg;
+      if (typeof body === 'string') return body;
+      return String(err.status || 'Error');
+    } catch {
+      return String(err.status || 'Error');
+    }
+  }
+
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-
     if (!id) {
       this.error = 'ID inválido';
       return;
     }
-
     this.getUser(id);
   }
 
@@ -41,8 +52,7 @@ export class DetailUser implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error(err);
-        this.error = 'Error al cargar el usuario';
+        this.error = this.extractError(err);
         this.loading = false;
       }
     });
@@ -53,14 +63,13 @@ export class DetailUser implements OnInit {
 
     this.loading = true;
 
-    this.userService.deleteProfile().subscribe({
+    this.userService.deleteUser(id).subscribe({
       next: () => {
         this.loading = false;
         this.router.navigate(['/dashboard/users']);
       },
       error: (err) => {
-        console.error(err);
-        this.error = 'Error al eliminar el usuario';
+        this.error = this.extractError(err);
         this.loading = false;
       }
     });

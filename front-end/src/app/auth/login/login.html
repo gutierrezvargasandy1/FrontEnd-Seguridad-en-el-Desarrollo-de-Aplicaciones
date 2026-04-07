@@ -1,31 +1,55 @@
 <div class="login-container">
   <h2>Iniciar Sesión</h2>
 
-  <form (ngSubmit)="onLogin()">
-    
+  <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)">
+
+    <!-- Usuario -->
     <div>
       <label>Usuario</label>
-      <input 
-        type="text" 
-        [(ngModel)]="username" 
-        name="username" 
+      <input
+        type="text"
+        name="username"
+        [(ngModel)]="username"
+        #userCtrl="ngModel"
         required
+        minlength="3"
       />
+
+      <small class="error" *ngIf="userCtrl.invalid && userCtrl.touched">
+        El usuario es obligatorio (mínimo 3 caracteres)
+      </small>
     </div>
 
+    <!-- Password -->
     <div>
       <label>Contraseña</label>
-      <input 
-        type="password" 
-        [(ngModel)]="password" 
-        name="password" 
+      <input
+        type="password"
+        name="password"
+        [(ngModel)]="password"
+        #passCtrl="ngModel"
         required
+        minlength="4"
       />
+
+      <small class="error" *ngIf="passCtrl.invalid && passCtrl.touched">
+        La contraseña es obligatoria (mínimo 4 caracteres)
+      </small>
     </div>
 
-    <button type="submit">Entrar</button>
+    <!-- Error del servidor -->
+    <div class="server-error" *ngIf="serverError">
+      {{ serverError }}
+    </div>
 
-    <button type="submit" [routerLink]="'/register'">Registrate</button>
+    <button type="submit" [disabled]="loginForm.invalid || loading">
+      {{ loading ? 'Entrando...' : 'Entrar' }}
+    </button>
+
+    <!-- ESTE YA NO ES SUBMIT -->
+    <button type="submit" [routerLink]="'/register'">
+      Regístrate
+    </button>
 
   </form>
 </div>

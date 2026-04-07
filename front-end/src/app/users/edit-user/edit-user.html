@@ -1,42 +1,57 @@
-<div class="edit-user-container" *ngIf="user">
+<div class="edit-user-container" *ngIf="user as u">
+
   <div class="detail-header">
     <h2>Editar Usuario</h2>
     <button routerLink="/dashboard/users" class="btn-volver">← Volver</button>
   </div>
 
   <div class="detail-avatar">
-    {{ user.name.charAt(0).toUpperCase() }}{{ user.lastname.charAt(0).toUpperCase() }}
+    {{ (u.name?.charAt(0) || '').toUpperCase() }}
+    {{ (u.lastname?.charAt(0) || '').toUpperCase() }}
   </div>
 
   <form #form="ngForm" (ngSubmit)="updateUser(form)">
 
     <div class="form-group">
       <label>Nombre</label>
-      <input type="text" name="name" [(ngModel)]="user.name" required />
+      <input type="text" name="name" [(ngModel)]="u.name" required />
     </div>
 
     <div class="form-group">
       <label>Apellido</label>
-      <input type="text" name="lastname" [(ngModel)]="user.lastname" required />
+      <input type="text" name="lastname" [(ngModel)]="u.lastname" required />
     </div>
 
     <div class="form-group">
       <label>Username</label>
-      <input type="text" name="username" [(ngModel)]="user.username" required />
+      <input type="text" name="username" [(ngModel)]="u.username" required />
     </div>
 
     <div class="form-actions">
-      <button type="button" routerLink="/dashboard/users" class="btn-cancelar">Cancelar</button>
+      <button type="button" routerLink="/dashboard/users" class="btn-cancelar">
+        Cancelar
+      </button>
+
       <button type="submit" [disabled]="loading" class="btn-guardar">
         {{ loading ? 'Guardando...' : 'Guardar cambios' }}
       </button>
     </div>
 
-    <p *ngIf="successMessage" class="msg-success">{{ successMessage }}</p>
-    <p *ngIf="errorMessage" class="msg-error">{{ errorMessage }}</p>
+    <div *ngIf="successMessage" class="msg-success">
+      {{ successMessage }}
+    </div>
+
+    <div *ngIf="errorMessage" class="msg-error">
+      {{ errorMessage }}
+    </div>
 
   </form>
 </div>
 
-<div *ngIf="loading && !user" class="loading-text">Cargando usuario...</div>
-<div *ngIf="error" class="msg-error">{{ error }}</div>
+<div *ngIf="loading && !user" class="loading-text">
+  Cargando usuario...
+</div>
+
+<div *ngIf="error" class="msg-error">
+  {{ error }}
+</div>

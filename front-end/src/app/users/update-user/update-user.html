@@ -2,7 +2,7 @@
   <h2>Actualizar Perfil</h2>
 
   <form #form="ngForm" (ngSubmit)="updateProfile(form)">
-    
+
     <div>
       <label>Nombre</label>
       <input type="text" name="name" [(ngModel)]="user.name" required />
@@ -18,11 +18,12 @@
       <input type="text" name="username" [(ngModel)]="user.username" required />
     </div>
 
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Actualizando...' : 'Actualizar' }}
+    </button>
 
-    <button type="submit" [disabled]="loading">Actualizar</button>
-
-    <p *ngIf="successMessage" style="color: green">{{ successMessage }}</p>
-    <p *ngIf="errorMessage" style="color: red">{{ errorMessage }}</p>
+    <p *ngIf="successMessage" class="msg-success">{{ successMessage }}</p>
+    <p *ngIf="errorMessage" class="msg-error">{{ errorMessage }}</p>
 
   </form>
 </div>

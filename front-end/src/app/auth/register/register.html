@@ -3,43 +3,58 @@
 
   <form [formGroup]="registerForm" (ngSubmit)="submit()">
 
+    <!-- Nombre -->
     <div class="form-group">
       <label>Nombre</label>
       <input type="text" formControlName="name">
-      <small *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.invalid">
+      <small class="error"
+        *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.errors">
         El nombre es obligatorio (mínimo 3 letras)
       </small>
     </div>
 
+    <!-- Apellido -->
     <div class="form-group">
       <label>Apellido</label>
       <input type="text" formControlName="lastname">
-      <small *ngIf="registerForm.get('lastname')?.touched && registerForm.get('lastname')?.invalid">
+      <small class="error"
+        *ngIf="registerForm.get('lastname')?.touched && registerForm.get('lastname')?.errors">
         El apellido es obligatorio (mínimo 3 letras)
       </small>
     </div>
 
+    <!-- Usuario -->
     <div class="form-group">
       <label>Usuario</label>
       <input type="text" formControlName="username">
-      <small *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.invalid">
+      <small class="error"
+        *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors">
         El usuario es obligatorio (mínimo 4 letras)
       </small>
     </div>
 
+    <!-- Password -->
     <div class="form-group">
       <label>Contraseña</label>
       <input type="password" formControlName="password">
-      <small *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+      <small class="error"
+        *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors">
         La contraseña es obligatoria (mínimo 6 caracteres)
       </small>
     </div>
 
-    <button type="submit" [disabled]="loading">
+    <!-- Error/éxito servidor -->
+    <div *ngIf="serverError" class="server-error">
+      {{ serverError }}
+    </div>
+
+    <div *ngIf="successMessage" class="success-msg">
+      {{ successMessage }}
+    </div>
+
+    <button type="submit" [disabled]="loading || registerForm.invalid">
       {{ loading ? 'Registrando...' : 'Registrar' }}
     </button>
-
-    <p class="message">{{ message }}</p>
 
   </form>
 </div>

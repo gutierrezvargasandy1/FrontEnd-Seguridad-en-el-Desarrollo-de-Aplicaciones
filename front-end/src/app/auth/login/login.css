@@ -71,3 +71,22 @@
   background-color: #7f8c8d;
   cursor: not-allowed;
 }
+
+
+.error {
+  color: red;
+  font-size: 12px;
+}
+
+.server-error {
+  margin-top: 10px;
+  color: white;
+  background: #e74c3c;
+  padding: 8px;
+  border-radius: 5px;
+}
+
+button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -1,33 +1,95 @@
 <div class="create-user-container">
   <h2>Crear Usuario</h2>
 
+  <!-- Error general -->
   <div *ngIf="error" class="msg-error">{{ error }}</div>
 
   <form #form="ngForm" (ngSubmit)="createUser(form)">
 
+    <!-- NOMBRE -->
     <div class="form-group">
       <label>Nombre</label>
-      <input type="text" name="name" [(ngModel)]="userData.name" required placeholder="Nombre" />
+      <input
+        type="text"
+        name="name"
+        [(ngModel)]="userData.name"
+        #name="ngModel"
+        required
+        minlength="3"
+        placeholder="Nombre"
+      />
+
+      <div class="error" *ngIf="name.invalid && name.touched">
+        <small *ngIf="name.errors?.['required']">El nombre es obligatorio</small>
+        <small *ngIf="name.errors?.['minlength']">Mínimo 3 caracteres</small>
+      </div>
     </div>
 
+    <!-- APELLIDO -->
     <div class="form-group">
       <label>Apellido</label>
-      <input type="text" name="lastname" [(ngModel)]="userData.lastname" required placeholder="Apellido" />
+      <input
+        type="text"
+        name="lastname"
+        [(ngModel)]="userData.lastname"
+        #lastname="ngModel"
+        required
+        placeholder="Apellido"
+      />
+
+      <div class="error" *ngIf="lastname.invalid && lastname.touched">
+        <small>El apellido es obligatorio</small>
+      </div>
     </div>
 
+    <!-- USERNAME -->
     <div class="form-group">
       <label>Username</label>
-      <input type="text" name="username" [(ngModel)]="userData.username" required placeholder="@usuario" />
+      <input
+        type="text"
+        name="username"
+        [(ngModel)]="userData.username"
+        #username="ngModel"
+        required
+        minlength="4"
+        placeholder="@usuario"
+      />
+
+      <div class="error" *ngIf="username.invalid && username.touched">
+        <small *ngIf="username.errors?.['required']">El username es obligatorio</small>
+        <small *ngIf="username.errors?.['minlength']">Mínimo 4 caracteres</small>
+      </div>
     </div>
 
+    <!-- PASSWORD -->
     <div class="form-group">
       <label>Contraseña</label>
-      <input type="password" name="password" [(ngModel)]="userData.password" required placeholder="••••••••" />
+      <input
+        type="password"
+        name="password"
+        [(ngModel)]="userData.password"
+        #password="ngModel"
+        required
+        minlength="6"
+        placeholder="••••••••"
+      />
+
+      <div class="error" *ngIf="password.invalid && password.touched">
+        <small *ngIf="password.errors?.['required']">La contraseña es obligatoria</small>
+        <small *ngIf="password.errors?.['minlength']">Mínimo 6 caracteres</small>
+      </div>
     </div>
 
     <div class="form-actions">
-      <button type="button" routerLink="/dashboard/users" class="btn-cancelar">Cancelar</button>
-      <button type="submit" [disabled]="loading" class="btn-guardar">
+      <button type="button" routerLink="/dashboard/users" class="btn-cancelar">
+        Cancelar
+      </button>
+
+      <button
+        type="submit"
+        [disabled]="form.invalid || loading"
+        class="btn-guardar"
+      >
         {{ loading ? 'Guardando...' : 'Crear Usuario' }}
       </button>
     </div>

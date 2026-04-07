@@ -10,14 +10,17 @@ import { Router } from '@angular/router';
   styleUrl: './register.css',
 })
 export class Register {
- registerForm: FormGroup;
+  registerForm: FormGroup;
   loading = false;
+
   message = '';
+  successMessage = '';
+  serverError = '';
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private router:Router,
+    private router: Router,
   ) {
     this.registerForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -25,6 +28,19 @@ export class Register {
       username: ['', [Validators.required, Validators.minLength(4)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
+  }
+
+  private extractError(err: any): string {
+    try {
+      const body = typeof err.error === 'string' ? JSON.parse(err.error) : err.error;
+      const msg = body?.message;
+      if (Array.isArray(msg)) return msg[0];
+      if (typeof msg === 'string') return msg;
+      if (typeof body === 'string') return body;
+      return String(err.status || 'Error');
+    } catch {
+      return String(err.status || 'Error');
+    }
   }
 
   submit() {
@@ -35,20 +51,23 @@ export class Register {
 
     this.loading = true;
     this.message = '';
+    this.successMessage = '';
+    this.serverError = '';
 
     const userData: CreateUserDto = this.registerForm.value;
 
     this.userService.createUser(userData).subscribe({
-      next: (res) => {
-        this.message = 'Usuario registrado correctamente';
-        this.registerForm.reset();
+      next: () => {
+        this.successMessage = 'Usuario registrado correctamente';
         this.loading = false;
-        this.router.navigate(['/login']);
+        this.registerForm.reset();
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 1200);
       },
       error: (err) => {
-        this.message = 'Error al registrar usuario';
+        this.serverError = this.extractError(err);
         this.loading = false;
-        console.error(err);
       }
     });
   }

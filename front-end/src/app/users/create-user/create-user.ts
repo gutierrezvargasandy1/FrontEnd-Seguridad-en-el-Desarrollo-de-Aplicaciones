@@ -26,9 +26,25 @@ export class CreateUser {
     private router: Router
   ) {}
 
+  private extractError(err: any): string {
+    try {
+      const body = typeof err.error === 'string' ? JSON.parse(err.error) : err.error;
+      const msg = body?.message;
+      if (Array.isArray(msg)) return msg[0];
+      if (typeof msg === 'string') return msg;
+      if (typeof body === 'string') return body;
+      return String(err.status || 'Error');
+    } catch {
+      return String(err.status || 'Error');
+    }
+  }
+
   createUser(form: NgForm) {
     if (form.invalid) {
-      this.error = 'Todos los campos son obligatorios';
+      Object.values(form.controls).forEach(control => {
+        control.markAsTouched();
+      });
+      this.error = 'Corrige los campos marcados';
       return;
     }
 
@@ -36,18 +52,13 @@ export class CreateUser {
     this.error = null;
 
     this.userService.createUser(this.userData).subscribe({
-      next: (res) => {
-        console.log('Usuario creado:', res);
-
+      next: () => {
         this.loading = false;
         form.resetForm();
-
-        // Redirige a la lista de usuarios
         this.router.navigate(['/dashboard/users']);
       },
       error: (err) => {
-        console.error(err);
-        this.error = 'Error al crear el usuario';
+        this.error = this.extractError(err);
         this.loading = false;
       }
     });

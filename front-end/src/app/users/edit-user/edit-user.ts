@@ -7,15 +7,16 @@ import { UserService, User } from '../../services/user';
   selector: 'app-edit-user',
   standalone: false,
   templateUrl: './edit-user.html',
-  styleUrl: './edit-user.css',
+  styleUrls: ['./edit-user.css'],
 })
 export class EditUser implements OnInit {
 
   user: User | null = null;
-  loading = false;
-  error = '';
-  successMessage = '';
-  errorMessage = '';
+
+  loading: boolean = false;
+  error: string = '';
+  successMessage: string = '';
+  errorMessage: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -23,8 +24,25 @@ export class EditUser implements OnInit {
     private userService: UserService
   ) {}
 
+  private extractError(err: any): string {
+    let body = err.error;
+
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body); } catch { return body; }
+    }
+
+    const msg = body?.message;
+    return Array.isArray(msg) ? msg[0] : msg || body?.error || String(err.status);
+  }
+
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+
+    if (!id) {
+      this.error = 'ID inválido';
+      return;
+    }
+
     this.loading = true;
 
     this.userService.getUserById(id).subscribe({
@@ -32,8 +50,8 @@ export class EditUser implements OnInit {
         this.user = data;
         this.loading = false;
       },
-      error: () => {
-        this.error = 'No se pudo cargar el usuario.';
+      error: (err) => {
+        this.error = this.extractError(err);
         this.loading = false;
       }
     });
@@ -53,13 +71,15 @@ export class EditUser implements OnInit {
     };
 
     this.userService.updateUserById(this.user.id, dto).subscribe({
-      next: () => {
-        this.successMessage = 'Usuario actualizado correctamente.';
+      next: (res: any) => {
+        this.successMessage = res?.message || 'Actualizado';
         this.loading = false;
-        setTimeout(() => this.router.navigate(['/dashboard/users']), 1500);
+        setTimeout(() => {
+          this.router.navigate(['/dashboard/users']);
+        }, 1500);
       },
-      error: () => {
-        this.errorMessage = 'Error al actualizar el usuario.';
+      error: (err) => {
+        this.errorMessage = this.extractError(err);
         this.loading = false;
       }
     });

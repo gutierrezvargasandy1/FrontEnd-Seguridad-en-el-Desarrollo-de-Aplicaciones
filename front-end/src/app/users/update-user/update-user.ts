@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UserService, User, UpdateUserDto } from '../../services/user';
 import { NgForm } from '@angular/forms';
 import { AuthService } from '../../services/auth';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-update-user',
@@ -10,30 +11,65 @@ import { AuthService } from '../../services/auth';
   styleUrl: './update-user.css',
 })
 export class UpdateUser {
- user: User | null = null;
-  password: string = '';
+
+  user: User | null = null;
   loading: boolean = false;
   successMessage: string = '';
   errorMessage: string = '';
 
-  constructor(private userService: UserService, private authService: AuthService) {}
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadProfile();
   }
 
-  loadProfile() {
+  // ✅ función sleep
+  sleep(ms: number) {
+    return new Promise<void>(resolve => setTimeout(resolve, ms));
+  }
+
+  loadProfile(): void {
+    this.loading = true;
+    this.errorMessage = '';
+
     this.authService.me().subscribe({
-      next: (res) => this.user = res,
+      next: (res) => {
+        this.user = res;
+        this.loading = false;
+      },
       error: (err) => {
-        console.error('Error loading profile', err);
-        this.errorMessage = 'No se pudo cargar el perfil';
+        this.errorMessage = this.extractError(err);
+        this.loading = false;
       }
     });
   }
 
-  updateProfile(form: NgForm) {
-    if (!this.user) return;
+  private extractError(err: any): string {
+    try {
+      const body = typeof err.error === 'string' ? JSON.parse(err.error) : err.error;
+      const msg = body?.message;
+      if (Array.isArray(msg)) return msg[0];
+      if (typeof msg === 'string') return msg;
+      if (typeof body === 'string') return body;
+      return String(err.status || 'Error');
+    } catch {
+      return String(err.status || 'Error');
+    }
+  }
+
+  updateProfile(form: NgForm): void {
+    if (form.invalid || !this.user) {
+      this.errorMessage = 'Todos los campos son obligatorios';
+      return;
+    }
+
+    this.loading = true;
+    this.successMessage = '';
+    this.errorMessage = '';
 
     const updateDto: UpdateUserDto = {
       name: this.user.name,
@@ -41,19 +77,18 @@ export class UpdateUser {
       username: this.user.username,
     };
 
-    this.loading = true;
     this.userService.updateProfile(updateDto).subscribe({
-      next: (res) => {
-        this.successMessage = 'Perfil actualizado correctamente';
-        this.errorMessage = '';
-        this.password = ''; 
+      next: async (res) => {
         this.user = res;
+        this.successMessage = 'Perfil actualizado correctamente';
         this.loading = false;
+        form.control.markAsPristine();
+
+        await this.sleep(1000); 
+        this.router.navigate(['/dashboard/profile']);
       },
       error: (err) => {
-        console.error('Error updating profile', err);
-        this.errorMessage = 'Error al actualizar el perfil';
-        this.successMessage = '';
+        this.errorMessage = this.extractError(err);
         this.loading = false;
       }
     });

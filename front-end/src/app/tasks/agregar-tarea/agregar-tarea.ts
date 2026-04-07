@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
   selector: 'app-agregar-tarea',
   standalone: false,
   templateUrl: './agregar-tarea.html',
-  styleUrls: ['./agregar-tarea.css'], // corregido styleUrl -> styleUrls
+  styleUrls: ['./agregar-tarea.css'],
 })
 export class AgregarTarea {
 
@@ -19,6 +19,10 @@ export class AgregarTarea {
   constructor(private taskService: TaskService, private router: Router) {}
 
   agregarTarea() {
+
+    // 🔥 limpiar error anterior
+    this.error = '';
+
     if (!this.name.trim()) {
       this.error = 'El nombre de la tarea es obligatorio';
       return;
@@ -27,21 +31,33 @@ export class AgregarTarea {
     this.loading = true;
 
     const nuevaTarea: CreateTaskDto = {
-      name: this.name,
-      description: this.description,
+      name: this.name.trim(),
+      description: this.description?.trim() || '',
       priority: this.priority
     };
 
     this.taskService.createTask(nuevaTarea).subscribe({
-      next: (task) => {
+      next: () => {
         this.loading = false;
-        this.router.navigate(['/dashboard/tasks']); 
+
+        // limpiar formulario por seguridad UX
+        this.name = '';
+        this.description = '';
+        this.priority = false;
+
+        this.router.navigate(['/dashboard/tasks']);
       },
       error: (err) => {
-        this.loading = false;
-        this.error = 'Error al crear la tarea';
-        console.error(err);
-      }
+  this.loading = false;
+
+  this.error =
+    err.error?.message ||
+    err.error ||
+    err.message ||
+    `Error HTTP ${err.status}`;
+
+  console.error('Error creando tarea:', err);
+}
     });
   }
 }
