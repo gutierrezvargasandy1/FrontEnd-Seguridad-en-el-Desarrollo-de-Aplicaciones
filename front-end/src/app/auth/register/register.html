@@ -1,58 +1,118 @@
 <div class="register-container">
   <h2>Registro de Usuario</h2>
 
-  <form [formGroup]="registerForm" (ngSubmit)="submit()">
+  <form #registerForm="ngForm" (ngSubmit)="onRegister(registerForm)">
 
     <!-- Nombre -->
     <div class="form-group">
       <label>Nombre</label>
-      <input type="text" formControlName="name">
-      <small class="error"
-        *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.errors">
-        El nombre es obligatorio (mínimo 3 letras)
+      <input
+        type="text"
+        name="name"
+        [(ngModel)]="name"
+        #nameCtrl="ngModel"
+        required
+        minlength="3"
+        maxlength="50"
+        pattern="[a-zA-ZáéíóúñÑ\s]+"
+      />
+      <small *ngIf="nameCtrl.invalid && (nameCtrl.touched || registerForm.submitted)">
+        <span *ngIf="nameCtrl.hasError('required')">El nombre es obligatorio.</span>
+        <span *ngIf="nameCtrl.hasError('minlength')">Mínimo 3 caracteres.</span>
+        <span *ngIf="nameCtrl.hasError('maxlength')">Máximo 50 caracteres.</span>
+        <span *ngIf="nameCtrl.hasError('pattern')">Solo letras y espacios.</span>
       </small>
+      <small class="field-error" *ngIf="fieldErrors['name']">{{ fieldErrors['name'] }}</small>
     </div>
 
     <!-- Apellido -->
     <div class="form-group">
       <label>Apellido</label>
-      <input type="text" formControlName="lastname">
-      <small class="error"
-        *ngIf="registerForm.get('lastname')?.touched && registerForm.get('lastname')?.errors">
-        El apellido es obligatorio (mínimo 3 letras)
+      <input
+        type="text"
+        name="lastname"
+        [(ngModel)]="lastname"
+        #lastnameCtrl="ngModel"
+        required
+        minlength="3"
+        maxlength="50"
+        pattern="[a-zA-ZáéíóúñÑ\s]+"
+      />
+      <small *ngIf="lastnameCtrl.invalid && (lastnameCtrl.touched || registerForm.submitted)">
+        <span *ngIf="lastnameCtrl.hasError('required')">El apellido es obligatorio.</span>
+        <span *ngIf="lastnameCtrl.hasError('minlength')">Mínimo 3 caracteres.</span>
+        <span *ngIf="lastnameCtrl.hasError('maxlength')">Máximo 50 caracteres.</span>
+        <span *ngIf="lastnameCtrl.hasError('pattern')">Solo letras y espacios.</span>
       </small>
+      <small class="field-error" *ngIf="fieldErrors['lastname']">{{ fieldErrors['lastname'] }}</small>
     </div>
 
-    <!-- Usuario -->
+    <!-- Usuario (correo electrónico) -->
     <div class="form-group">
-      <label>Usuario</label>
-      <input type="text" formControlName="username">
-      <small class="error"
-        *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors">
-        El usuario es obligatorio (mínimo 4 letras)
+      <label>Correo electrónico</label>
+      <input
+        type="email"
+        name="username"
+        [(ngModel)]="username"
+        #usernameCtrl="ngModel"
+        required
+        email
+        minlength="3"
+        maxlength="50"
+      />
+      <small *ngIf="usernameCtrl.invalid && (usernameCtrl.touched || registerForm.submitted)">
+        <span *ngIf="usernameCtrl.hasError('required')">El correo es obligatorio.</span>
+        <span *ngIf="usernameCtrl.hasError('email')">Ingrese un correo válido (ej: usuario@dominio.com).</span>
+        <span *ngIf="usernameCtrl.hasError('minlength')">Mínimo 3 caracteres.</span>
+        <span *ngIf="usernameCtrl.hasError('maxlength')">Máximo 50 caracteres.</span>
       </small>
+      <small class="field-error" *ngIf="fieldErrors['username']">{{ fieldErrors['username'] }}</small>
     </div>
 
-    <!-- Password -->
+    <!-- Contraseña -->
     <div class="form-group">
       <label>Contraseña</label>
-      <input type="password" formControlName="password">
-      <small class="error"
-        *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors">
-        La contraseña es obligatoria (mínimo 6 caracteres)
+      <input
+        type="password"
+        name="password"
+        [(ngModel)]="password"
+        #passwordCtrl="ngModel"
+        required
+        minlength="6"
+        maxlength="100"
+        pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).+$"
+      />
+      <small *ngIf="passwordCtrl.invalid && (passwordCtrl.touched || registerForm.submitted)">
+        <span *ngIf="passwordCtrl.hasError('required')">La contraseña es obligatoria.</span>
+        <span *ngIf="passwordCtrl.hasError('minlength')">Mínimo 6 caracteres.</span>
+        <span *ngIf="passwordCtrl.hasError('maxlength')">Máximo 100 caracteres.</span>
+        <span *ngIf="passwordCtrl.hasError('pattern')">
+          Debe tener al menos una mayúscula, un número y un símbolo (!@#$%^&*).
+        </span>
+      </small>
+      <small class="field-error" *ngIf="fieldErrors['password']">{{ fieldErrors['password'] }}</small>
+    </div>
+
+    <!-- Confirmar contraseña -->
+    <div class="form-group">
+      <label>Confirmar contraseña</label>
+      <input
+        type="password"
+        name="confirmPassword"
+        [(ngModel)]="confirmPassword"
+        #confirmCtrl="ngModel"
+        required
+      />
+      <small *ngIf="(confirmCtrl.touched || registerForm.submitted) && password !== confirmPassword">
+        Las contraseñas no coinciden.
       </small>
     </div>
 
-    <!-- Error/éxito servidor -->
-    <div *ngIf="serverError" class="server-error">
-      {{ serverError }}
-    </div>
+    <!-- Mensajes globales (usando la clase .message del CSS) -->
+    <div *ngIf="serverError" class="message server-error">{{ serverError }}</div>
+    <div *ngIf="successMessage" class="message success-msg">{{ successMessage }}</div>
 
-    <div *ngIf="successMessage" class="success-msg">
-      {{ successMessage }}
-    </div>
-
-    <button type="submit" [disabled]="loading || registerForm.invalid">
+    <button type="submit" [disabled]="loading || registerForm.invalid || (password !== confirmPassword)">
       {{ loading ? 'Registrando...' : 'Registrar' }}
     </button>
 

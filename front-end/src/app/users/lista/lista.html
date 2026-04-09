@@ -4,20 +4,25 @@
     <button routerLink="/dashboard/users/create" class="btn-agregar">+ Nuevo Usuario</button>
   </div>
 
-  <ul class="user-list">
-    <li *ngFor="let user of users" class="user-item"
-        [routerLink]="['/dashboard/users', user.id]">
-      <div class="user-info">
-        <span class="user-name">{{ user.name }} {{ user.lastname }}</span>
-        <span class="user-username">{{ user.username }}</span>
-      </div>
+  <!-- Estado de carga -->
+  <div *ngIf="loading" class="loading-msg">Cargando usuarios...</div>
+
+  <!-- Error global -->
+  <div *ngIf="serverError" class="server-error">{{ serverError }}</div>
+
+  <!-- Lista de usuarios -->
+  <ul class="user-list" *ngIf="!loading && users.length > 0">
+    <li *ngFor="let user of users" class="user-item">
+      <span [routerLink]="['/dashboard/users', user.id]" class="user-link">{{ user.name }} {{ user.lastname }}</span>
       <div class="user-actions">
-        <button [routerLink]="['/dashboard/users/edit', user.id]"
-                (click)="$event.stopPropagation()"
-                class="btn-editar">Editar</button>
-        <button (click)="deleteUser(user.id); $event.stopPropagation()"
-                class="btn-eliminar">Eliminar</button>
+        <button (click)="deleteUser(user.id)" class="btn-eliminar">Eliminar</button>
+        <button [routerLink]="['/dashboard/users/edit', user.id]" class="btn-update">Editar</button>
       </div>
     </li>
   </ul>
+
+  <!-- Mensaje cuando no hay usuarios -->
+  <div *ngIf="!loading && users.length === 0 && !serverError" class="empty-msg">
+    No hay usuarios registrados.
+  </div>
 </div>

@@ -1,73 +1,69 @@
 import { Component } from '@angular/core';
-import { UserService, CreateUserDto } from '../../services/user';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgForm } from '@angular/forms';
+import { AuthService, RegisterError } from '../../services/auth';
 
 @Component({
   selector: 'app-register',
   standalone: false,
   templateUrl: './register.html',
-  styleUrl: './register.css',
+  styleUrls: ['./register.css']
 })
 export class Register {
-  registerForm: FormGroup;
-  loading = false;
+  name = '';
+  lastname = '';
+  username = '';
+  password = '';
+  confirmPassword = '';
 
-  message = '';
+  loading = false;
   successMessage = '';
   serverError = '';
+  fieldErrors: { [key: string]: string } = {};
 
   constructor(
-    private fb: FormBuilder,
-    private userService: UserService,
-    private router: Router,
-  ) {
-    this.registerForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      lastname: ['', [Validators.required, Validators.minLength(3)]],
-      username: ['', [Validators.required, Validators.minLength(4)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-    });
-  }
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
-  private extractError(err: any): string {
-    try {
-      const body = typeof err.error === 'string' ? JSON.parse(err.error) : err.error;
-      const msg = body?.message;
-      if (Array.isArray(msg)) return msg[0];
-      if (typeof msg === 'string') return msg;
-      if (typeof body === 'string') return body;
-      return String(err.status || 'Error');
-    } catch {
-      return String(err.status || 'Error');
+  onRegister(form: NgForm): void {
+    this.serverError = '';
+    this.fieldErrors = {};
+
+    if (form.invalid) {
+      form.control.markAllAsTouched();
+      return;
     }
-  }
 
-  submit() {
-    if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched();
+    if (this.password !== this.confirmPassword) {
+      form.form.controls['confirmPassword']?.setErrors({ notMatch: true });
+      form.control.markAllAsTouched();
       return;
     }
 
     this.loading = true;
-    this.message = '';
-    this.successMessage = '';
-    this.serverError = '';
 
-    const userData: CreateUserDto = this.registerForm.value;
+    const userData = {
+      name: this.name,
+      lastname: this.lastname,
+      username: this.username,
+      password: this.password
+    };
 
-    this.userService.createUser(userData).subscribe({
+    this.authService.register(userData).subscribe({
       next: () => {
         this.successMessage = 'Usuario registrado correctamente';
         this.loading = false;
-        this.registerForm.reset();
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 1200);
+        form.resetForm();
+        setTimeout(() => this.router.navigate(['/login']), 1200);
       },
-      error: (err) => {
-        this.serverError = this.extractError(err);
+      error: (err: RegisterError) => {
         this.loading = false;
+        if (err.fieldErrors) {
+          this.fieldErrors = err.fieldErrors;
+        } else {
+          this.serverError = err.userMessage;
+        }
       }
     });
   }

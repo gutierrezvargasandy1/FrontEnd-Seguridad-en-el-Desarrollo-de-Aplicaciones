@@ -1,21 +1,21 @@
-import { Component } from '@angular/core';
-import { UserService, User, UpdateUserDto } from '../../services/user';
-import { NgForm } from '@angular/forms';
-import { AuthService } from '../../services/auth';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgForm } from '@angular/forms';
+import { UserService, User, UpdateUserDto, UserError } from '../../services/user';
+import { AuthService, LoginError } from '../../services/auth';
 
 @Component({
   selector: 'app-update-user',
   standalone: false,
   templateUrl: './update-user.html',
-  styleUrl: './update-user.css',
+  styleUrls: ['./update-user.css']
 })
-export class UpdateUser {
-
+export class UpdateUser implements OnInit {
   user: User | null = null;
-  loading: boolean = false;
-  successMessage: string = '';
-  errorMessage: string = '';
+  loading = false;
+  successMessage = '';
+  serverError = '';
+  fieldErrors: { [key: string]: string } = {};
 
   constructor(
     private userService: UserService,
@@ -27,69 +27,58 @@ export class UpdateUser {
     this.loadProfile();
   }
 
-  // ✅ función sleep
-  sleep(ms: number) {
-    return new Promise<void>(resolve => setTimeout(resolve, ms));
-  }
-
   loadProfile(): void {
     this.loading = true;
-    this.errorMessage = '';
+    this.serverError = '';
 
     this.authService.me().subscribe({
-      next: (res) => {
-        this.user = res;
+      next: (user) => {
+        this.user = user;
         this.loading = false;
       },
-      error: (err) => {
-        this.errorMessage = this.extractError(err);
+      error: (err: LoginError) => {
+        this.serverError = err.userMessage;
         this.loading = false;
       }
     });
   }
 
-  private extractError(err: any): string {
-    try {
-      const body = typeof err.error === 'string' ? JSON.parse(err.error) : err.error;
-      const msg = body?.message;
-      if (Array.isArray(msg)) return msg[0];
-      if (typeof msg === 'string') return msg;
-      if (typeof body === 'string') return body;
-      return String(err.status || 'Error');
-    } catch {
-      return String(err.status || 'Error');
-    }
-  }
-
   updateProfile(form: NgForm): void {
+    this.serverError = '';
+    this.fieldErrors = {};
+    this.successMessage = '';
+
     if (form.invalid || !this.user) {
-      this.errorMessage = 'Todos los campos son obligatorios';
+      form.control.markAllAsTouched();
       return;
     }
 
     this.loading = true;
-    this.successMessage = '';
-    this.errorMessage = '';
 
     const updateDto: UpdateUserDto = {
       name: this.user.name,
       lastname: this.user.lastname,
-      username: this.user.username,
+      username: this.user.username
     };
 
     this.userService.updateProfile(updateDto).subscribe({
-      next: async (res) => {
-        this.user = res;
+      next: (updatedUser) => {
+        this.user = updatedUser;
         this.successMessage = 'Perfil actualizado correctamente';
         this.loading = false;
         form.control.markAsPristine();
 
-        await this.sleep(1000); 
-        this.router.navigate(['/dashboard/profile']);
+        setTimeout(() => {
+          this.router.navigate(['/dashboard/profile']);
+        }, 1000);
       },
-      error: (err) => {
-        this.errorMessage = this.extractError(err);
+      error: (err: UserError) => {
         this.loading = false;
+        if (err.fieldErrors) {
+          this.fieldErrors = err.fieldErrors;
+        } else {
+          this.serverError = err.userMessage;
+        }
       }
     });
   }

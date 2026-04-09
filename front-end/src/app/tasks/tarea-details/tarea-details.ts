@@ -1,27 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TaskService } from '../../services/task';
+import { TaskService, Task, TaskError } from '../../services/task';
 
 @Component({
   selector: 'app-tarea-details',
   standalone: false,
   templateUrl: './tarea-details.html',
-  styleUrl: './tarea-details.css',
+  styleUrls: ['./tarea-details.css']
 })
-export class TareaDetails {
-
+export class TareaDetails implements OnInit {
   taskId!: number;
-  task: any;
-  loading: boolean = false;
-  error: string = '';
+  task: {
+    name: string;
+    description: string;
+    priority: string;
+    createdAt: Date;
+  } | null = null;
+  loading = false;
+  serverError = '';
 
-  constructor(private route: ActivatedRoute, private tareasService: TaskService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private taskService: TaskService
+  ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
       if (!idParam || isNaN(Number(idParam))) {
-        this.error = 'ID de tarea inválido.';
+        this.serverError = 'ID de tarea inválido.';
         return;
       }
       this.taskId = Number(idParam);
@@ -29,40 +36,27 @@ export class TareaDetails {
     });
   }
 
-  private extractError(err: any): string {
-    try {
-      const body = typeof err.error === 'string' ? JSON.parse(err.error) : err.error;
-      const msg = body?.message;
-      if (Array.isArray(msg)) return msg[0];
-      if (typeof msg === 'string') return msg;
-      if (typeof body === 'string') return body;
-      return String(err.status || 'Error');
-    } catch {
-      return String(err.status || 'Error');
-    }
-  }
-
-  loadTask() {
+  loadTask(): void {
     this.loading = true;
-    this.error = '';
+    this.serverError = '';
 
-    this.tareasService.getTaskById(this.taskId).subscribe({
-      next: (t) => {
+    this.taskService.getTaskById(this.taskId).subscribe({
+      next: (t: Task) => {
         if (!t) {
-          this.error = 'La tarea no existe.';
+          this.serverError = 'La tarea no existe.';
           this.loading = false;
           return;
         }
         this.task = {
-          name: t?.name || 'Sin nombre',
-          description: t?.description || 'No hay descripción',
-          priority: t?.priority ? 'Prioridad' : 'Normal',
-          createdAt: t?.created_at || new Date(),
+          name: t.name || 'Sin nombre',
+          description: t.description || 'No hay descripción',
+          priority: t.priority ? 'Alta' : 'Normal',
+          createdAt: new Date(t.created_at)
         };
         this.loading = false;
       },
-      error: (err) => {
-        this.error = this.extractError(err);
+      error: (err: TaskError) => {
+        this.serverError = err.userMessage;
         this.loading = false;
       }
     });

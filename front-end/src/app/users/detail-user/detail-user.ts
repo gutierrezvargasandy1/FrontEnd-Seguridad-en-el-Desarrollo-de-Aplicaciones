@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService, User } from '../../services/user';
+import { UserService, User, UserError } from '../../services/user';
 
 @Component({
   selector: 'app-detail-user',
   standalone: false,
   templateUrl: './detail-user.html',
-  styleUrls: ['./detail-user.css'],
+  styleUrls: ['./detail-user.css']
 })
 export class DetailUser implements OnInit {
-
   user: User | null = null;
-  loading: boolean = false;
-  error: string | null = null;
+  loading = false;
+  serverError = '';
+  fieldErrors: { [key: string]: string } = {}; 
 
   constructor(
     private route: ActivatedRoute,
@@ -20,56 +20,44 @@ export class DetailUser implements OnInit {
     private router: Router
   ) {}
 
-  private extractError(err: any): string {
-    try {
-      const body = typeof err.error === 'string' ? JSON.parse(err.error) : err.error;
-      const msg = body?.message;
-      if (Array.isArray(msg)) return msg[0];
-      if (typeof msg === 'string') return msg;
-      if (typeof body === 'string') return body;
-      return String(err.status || 'Error');
-    } catch {
-      return String(err.status || 'Error');
-    }
-  }
-
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (!id) {
-      this.error = 'ID inválido';
+    if (!id || isNaN(id)) {
+      this.serverError = 'ID de usuario inválido.';
       return;
     }
     this.getUser(id);
   }
 
-  getUser(id: number) {
+  getUser(id: number): void {
     this.loading = true;
-    this.error = null;
+    this.serverError = '';
 
     this.userService.getUserById(id).subscribe({
-      next: (res) => {
-        this.user = res;
+      next: (user) => {
+        this.user = user;
         this.loading = false;
       },
-      error: (err) => {
-        this.error = this.extractError(err);
+      error: (err: UserError) => {
+        this.serverError = err.userMessage;
         this.loading = false;
       }
     });
   }
 
-  deleteUser(id: number) {
+  deleteUser(id: number): void {
     if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
 
     this.loading = true;
+    this.serverError = '';
 
     this.userService.deleteUser(id).subscribe({
       next: () => {
         this.loading = false;
         this.router.navigate(['/dashboard/users']);
       },
-      error: (err) => {
-        this.error = this.extractError(err);
+      error: (err: UserError) => {
+        this.serverError = err.userMessage;
         this.loading = false;
       }
     });

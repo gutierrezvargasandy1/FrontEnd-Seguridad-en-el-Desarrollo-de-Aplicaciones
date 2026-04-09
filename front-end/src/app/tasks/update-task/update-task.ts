@@ -1,87 +1,86 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Task, TaskService } from '../../services/task';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { NgForm } from '@angular/forms';
+import { TaskService, TaskError } from '../../services/task';
 
 @Component({
   selector: 'app-update-task',
   standalone: false,
   templateUrl: './update-task.html',
-  styleUrl: './update-task.css',
+  styleUrls: ['./update-task.css']
 })
-export class UpdateTask {
-  taskForm!: FormGroup;
+export class UpdateTask implements OnInit {
+  name = '';
+  description = '';
+  priority = false;
+
   taskId!: number;
   loading = false;
-  message = '';
+  successMessage = '';
+  serverError = '';
+  fieldErrors: { [key: string]: string } = {};
 
   constructor(
-    private fb: FormBuilder,
     private taskService: TaskService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
-  private extractError(err: any): string {
-    try {
-      const body = typeof err.error === 'string' ? JSON.parse(err.error) : err.error;
-      const msg = body?.message;
-      if (Array.isArray(msg)) return msg[0];
-      if (typeof msg === 'string') return msg;
-      if (typeof body === 'string') return body;
-      return String(err.status || 'Error');
-    } catch {
-      return String(err.status || 'Error');
-    }
-  }
-
   ngOnInit(): void {
-    this.taskForm = this.fb.group({
-      name: ['', Validators.required],
-      description: [''],
-      priority: [false]
-    });
-
     const idParam = this.route.snapshot.paramMap.get('id');
     if (!idParam || isNaN(Number(idParam))) {
-      this.message = 'ID de tarea inválido.';
+      this.serverError = 'ID de tarea inválido.';
       return;
     }
-
     this.taskId = Number(idParam);
 
     this.taskService.getTaskById(this.taskId).subscribe({
-      next: (task: Task) => {
+      next: (task) => {
         if (!task) {
-          this.message = 'La tarea no existe.';
+          this.serverError = 'La tarea no existe.';
           return;
         }
-        this.taskForm.patchValue(task);
+        this.name = task.name;
+        this.description = task.description || '';
+        this.priority = task.priority;
       },
-      error: (err) => {
-        this.message = this.extractError(err);
+      error: (err: TaskError) => {
+        this.serverError = err.userMessage;
       }
     });
   }
 
-  submit() {
-    if (this.taskForm.invalid) {
-      this.taskForm.markAllAsTouched();
+  onSubmit(form: NgForm): void {
+    this.serverError = '';
+    this.fieldErrors = {};
+    this.successMessage = '';
+
+    if (form.invalid) {
+      form.control.markAllAsTouched();
       return;
     }
 
     this.loading = true;
-    this.message = '';
 
-    this.taskService.updateTask(this.taskId, this.taskForm.value).subscribe({
+    const updatedTask = {
+      name: this.name.trim(),
+      description: this.description?.trim() || '',
+      priority: this.priority
+    };
+
+    this.taskService.updateTask(this.taskId, updatedTask).subscribe({
       next: () => {
-        this.message = 'Tarea actualizada correctamente';
         this.loading = false;
-        this.router.navigate(['/dashboard/tasks']);
+        this.successMessage = 'Tarea actualizada correctamente';
+        setTimeout(() => this.router.navigate(['/dashboard/tasks']), 1000);
       },
-      error: (err) => {
-        this.message = this.extractError(err);
+      error: (err: TaskError) => {
         this.loading = false;
+        if (err.fieldErrors) {
+          this.fieldErrors = err.fieldErrors;
+        } else {
+          this.serverError = err.userMessage;
+        }
       }
     });
   }

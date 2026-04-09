@@ -1,33 +1,66 @@
 <div class="task-container">
   <h2>Actualizar Tarea</h2>
 
-  <form [formGroup]="taskForm" (ngSubmit)="submit()">
+  <form #taskForm="ngForm" (ngSubmit)="onSubmit(taskForm)">
 
+    <!-- Nombre de la tarea -->
     <div class="form-group">
       <label>Nombre de la tarea</label>
-      <input type="text" formControlName="name">
-      <small *ngIf="taskForm.get('name')?.touched && taskForm.get('name')?.invalid">
-        El nombre es obligatorio
+      <input
+        type="text"
+        name="name"
+        [(ngModel)]="name"
+        #nameCtrl="ngModel"
+        required
+        minlength="3"
+        maxlength="50"
+        pattern="^[a-zA-Z0-9áéíóúñÑ\s\-_,.]+$"
+      />
+      <small class="error" *ngIf="nameCtrl.invalid && (nameCtrl.touched || taskForm.submitted)">
+        <span *ngIf="nameCtrl.hasError('required')">El nombre es obligatorio.</span>
+        <span *ngIf="nameCtrl.hasError('minlength')">Mínimo 3 caracteres.</span>
+        <span *ngIf="nameCtrl.hasError('maxlength')">Máximo 50 caracteres.</span>
+        <span *ngIf="nameCtrl.hasError('pattern')">No se permiten símbolos peligrosos (&lt;&gt; {{ '{' }} {{ '}' }} [] `~!@#$%^&*()=+).</span>
       </small>
+      <small class="field-error" *ngIf="fieldErrors['name']">{{ fieldErrors['name'] }}</small>
     </div>
 
-    <div class="form-group">
-      <label>Descripción</label>
-      <textarea formControlName="description"></textarea>
-    </div>
+<!-- Descripción -->
+<div class="form-group">
+  <label for="description">Descripción:</label>
+  <textarea
+    id="description"
+    name="description"
+    [(ngModel)]="description"
+    #descCtrl="ngModel"
+    required
+    minlength="3"
+    maxlength="500"
+    placeholder="Escribe una descripción (mínimo 3 caracteres)"
+  ></textarea>
+  <small class="error" *ngIf="descCtrl.invalid && (descCtrl.touched || taskForm.submitted)">
+    <span *ngIf="descCtrl.hasError('required')">La descripción es obligatoria.</span>
+    <span *ngIf="descCtrl.hasError('minlength')">Mínimo 3 caracteres.</span>
+    <span *ngIf="descCtrl.hasError('maxlength')">Máximo 500 caracteres.</span>
+  </small>
+  <small class="field-error" *ngIf="fieldErrors['description']">{{ fieldErrors['description'] }}</small>
+</div>
 
+    <!-- Prioridad -->
     <div class="form-group checkbox">
       <label>
-        <input type="checkbox" formControlName="priority">
+        <input type="checkbox" name="priority" [(ngModel)]="priority" />
         Prioritaria
       </label>
     </div>
 
-    <button type="submit" [disabled]="loading">
+    <button type="submit" [disabled]="loading || taskForm.invalid">
       {{ loading ? 'Guardando...' : 'Actualizar' }}
     </button>
 
-    <p class="message">{{ message }}</p>
+    <!-- Mensajes globales -->
+    <div *ngIf="serverError" class="server-error">{{ serverError }}</div>
+    <div *ngIf="successMessage" class="success-msg">{{ successMessage }}</div>
 
   </form>
 </div>

@@ -1,4 +1,5 @@
-<div class="profile-container" *ngIf="!loading && user; else otherStates">
+<!-- Contenido cuando hay usuario y no hay error -->
+<div class="profile-container" *ngIf="!loading && user && !serverError">
   <div class="detail-header">
     <h2>Mi Perfil</h2>
     <button [routerLink]="['/dashboard/tasks']" class="btn-volver">← Volver</button>
@@ -6,36 +7,36 @@
 
   <!-- Avatar protegido -->
   <div class="detail-avatar">
-    {{ (user?.name?.charAt(0) || '?').toUpperCase() }}
-    {{ (user?.lastname?.charAt(0) || '?').toUpperCase() }}
+    {{ (user.name?.charAt(0) || '?').toUpperCase() }}
+    {{ (user.lastname?.charAt(0) || '?').toUpperCase() }}
   </div>
 
   <div class="detail-body">
     <div class="detail-row">
       <span class="detail-label">Nombre completo</span>
       <span class="detail-value">
-        {{ user?.name || 'Sin nombre' }} {{ user?.lastname || '' }}
+        {{ user.name || 'Sin nombre' }} {{ user.lastname || '' }}
       </span>
     </div>
 
     <div class="detail-row">
       <span class="detail-label">Username</span>
       <span class="detail-value">
-        @{{ user?.username || 'sin-username' }}
+        {{ user.username || 'sin-username' }}
       </span>
     </div>
 
     <div class="detail-row">
       <span class="detail-label">ID</span>
       <span class="detail-value">
-        #{{ user?.id || 'N/A' }}
+        #{{ user.id || 'N/A' }}
       </span>
     </div>
 
     <div class="detail-row">
       <span class="detail-label">Creado</span>
       <span class="detail-value">
-        {{ user?.created_at ? (user.created_at | date:'mediumDate') : 'Fecha no disponible' }}
+        {{ user.created_at ? (user.created_at | date:'mediumDate') : 'Fecha no disponible' }}
       </span>
     </div>
   </div>
@@ -47,11 +48,13 @@
   </div>
 </div>
 
-<!-- Estados -->
-<ng-template #otherStates>
-  <div *ngIf="loading" class="loading-text">Cargando perfil...</div>
-  <div *ngIf="!loading && error" class="msg-error">{{ error }}</div>
-  <div *ngIf="!loading && !error" class="msg-error">
-    No se encontró información del perfil.
-  </div>
-</ng-template>
+<!-- Estado de carga -->
+<div *ngIf="loading" class="loading-text">Cargando perfil...</div>
+
+<!-- Error global -->
+<div *ngIf="serverError && !loading" class="msg-error">{{ serverError }}</div>
+
+<!-- Si no hay usuario, no hay carga y no hay error -->
+<div *ngIf="!loading && !user && !serverError" class="msg-error">
+  No se encontró información del perfil.
+</div>

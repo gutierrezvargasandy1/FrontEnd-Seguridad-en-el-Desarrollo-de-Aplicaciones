@@ -2,14 +2,25 @@
   <div class="tareas-header">
     <h2>Mis Tareas</h2>
     <button [routerLink]="['/dashboard/tasks/nueva']" class="btn-agregar">+ Nueva Tarea</button>
-
   </div>
 
-  <ul class="tareas-list">
+  <!-- Estado de carga -->
+  <div *ngIf="loading" class="loading-msg">Cargando tareas...</div>
+
+  <!-- Error global -->
+  <div *ngIf="serverError" class="server-error">{{ serverError }}</div>
+
+  <!-- Lista de tareas -->
+  <ul class="tareas-list" *ngIf="!loading && tasks.length > 0">
     <li *ngFor="let task of tasks" class="tarea-item">
       <span [routerLink]="['/dashboard/tasks', task.id]" class="tarea-link">{{ task.name }}</span>
       <button (click)="deleteTask(task.id)" class="btn-eliminar">Eliminar</button>
       <button [routerLink]="['/dashboard/tasks/edit', task.id]" class="btn-update">Editar</button>
     </li>
   </ul>
+
+  <!-- Mensaje cuando no hay tareas -->
+  <div *ngIf="!loading && tasks.length === 0 && !serverError" class="empty-msg">
+    No tienes tareas aún. ¡Crea una nueva!
+  </div>
 </div>

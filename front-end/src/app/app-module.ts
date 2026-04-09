@@ -1,10 +1,10 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth-interceptor';
+import { ErrorInterceptor } from './interceptors/error-interceptor';  // ← Importa el nuevo interceptor
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TasksModule } from './tasks/tasks-module';
@@ -14,7 +14,6 @@ import { UsersModule } from './users/users-module';
 @NgModule({
   declarations: [
     App,
-    
   ],
   imports: [
     BrowserModule,
@@ -28,12 +27,18 @@ import { UsersModule } from './users/users-module';
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
-     {
-    provide: HTTP_INTERCEPTORS,
-    useClass: AuthInterceptor,
-    multi: true
-  }
-
+    // AuthInterceptor: Mete el JWT en cada peticion
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
+    // ErrorInterceptor: normalizacion de los errores HTTP
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [App]
 })

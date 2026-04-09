@@ -1,10 +1,7 @@
 <div class="create-user-container">
   <h2>Crear Usuario</h2>
 
-  <!-- Error general -->
-  <div *ngIf="error" class="msg-error">{{ error }}</div>
-
-  <form #form="ngForm" (ngSubmit)="createUser(form)">
+  <form #userForm="ngForm" (ngSubmit)="createUser(userForm)">
 
     <!-- NOMBRE -->
     <div class="form-group">
@@ -13,16 +10,20 @@
         type="text"
         name="name"
         [(ngModel)]="userData.name"
-        #name="ngModel"
+        #nameCtrl="ngModel"
         required
         minlength="3"
+        maxlength="50"
+        pattern="[a-zA-ZáéíóúñÑ\s]+"
         placeholder="Nombre"
       />
-
-      <div class="error" *ngIf="name.invalid && name.touched">
-        <small *ngIf="name.errors?.['required']">El nombre es obligatorio</small>
-        <small *ngIf="name.errors?.['minlength']">Mínimo 3 caracteres</small>
+      <div class="error" *ngIf="nameCtrl.invalid && (nameCtrl.touched || userForm.submitted)">
+        <small *ngIf="nameCtrl.hasError('required')">El nombre es obligatorio.</small>
+        <small *ngIf="nameCtrl.hasError('minlength')">Mínimo 3 caracteres.</small>
+        <small *ngIf="nameCtrl.hasError('maxlength')">Máximo 50 caracteres.</small>
+        <small *ngIf="nameCtrl.hasError('pattern')">Solo letras y espacios.</small>
       </div>
+      <small class="field-error" *ngIf="fieldErrors['name']">{{ fieldErrors['name'] }}</small>
     </div>
 
     <!-- APELLIDO -->
@@ -32,67 +33,82 @@
         type="text"
         name="lastname"
         [(ngModel)]="userData.lastname"
-        #lastname="ngModel"
+        #lastnameCtrl="ngModel"
         required
+        minlength="3"
+        maxlength="50"
+        pattern="[a-zA-ZáéíóúñÑ\s]+"
         placeholder="Apellido"
       />
-
-      <div class="error" *ngIf="lastname.invalid && lastname.touched">
-        <small>El apellido es obligatorio</small>
+      <div class="error" *ngIf="lastnameCtrl.invalid && (lastnameCtrl.touched || userForm.submitted)">
+        <small *ngIf="lastnameCtrl.hasError('required')">El apellido es obligatorio.</small>
+        <small *ngIf="lastnameCtrl.hasError('minlength')">Mínimo 3 caracteres.</small>
+        <small *ngIf="lastnameCtrl.hasError('maxlength')">Máximo 50 caracteres.</small>
+        <small *ngIf="lastnameCtrl.hasError('pattern')">Solo letras y espacios.</small>
       </div>
+      <small class="field-error" *ngIf="fieldErrors['lastname']">{{ fieldErrors['lastname'] }}</small>
     </div>
 
     <!-- USERNAME -->
     <div class="form-group">
-      <label>Username</label>
+      <label>Correo electrónico</label>
       <input
-        type="text"
+        type="email"
         name="username"
         [(ngModel)]="userData.username"
-        #username="ngModel"
+        #usernameCtrl="ngModel"
         required
-        minlength="4"
-        placeholder="@usuario"
+        email
+        minlength="5"
+        maxlength="100"
+        placeholder="usuario@dominio.com"
       />
-
-      <div class="error" *ngIf="username.invalid && username.touched">
-        <small *ngIf="username.errors?.['required']">El username es obligatorio</small>
-        <small *ngIf="username.errors?.['minlength']">Mínimo 4 caracteres</small>
+      <div class="error" *ngIf="usernameCtrl.invalid && (usernameCtrl.touched || userForm.submitted)">
+        <small *ngIf="usernameCtrl.hasError('required')">El correo es obligatorio.</small>
+        <small *ngIf="usernameCtrl.hasError('email')">Ingrese un correo válido (ej: usuario@dominio.com).</small>
+        <small *ngIf="usernameCtrl.hasError('minlength')">Mínimo 5 caracteres.</small>
+        <small *ngIf="usernameCtrl.hasError('maxlength')">Máximo 100 caracteres.</small>
       </div>
+      <small class="field-error" *ngIf="fieldErrors['username']">{{ fieldErrors['username'] }}</small>
     </div>
 
-    <!-- PASSWORD -->
+    <!-- PASSWORD  -->
     <div class="form-group">
       <label>Contraseña</label>
       <input
         type="password"
         name="password"
         [(ngModel)]="userData.password"
-        #password="ngModel"
+        #passwordCtrl="ngModel"
         required
         minlength="6"
+        maxlength="100"
+        pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).+$"
         placeholder="••••••••"
       />
-
-      <div class="error" *ngIf="password.invalid && password.touched">
-        <small *ngIf="password.errors?.['required']">La contraseña es obligatoria</small>
-        <small *ngIf="password.errors?.['minlength']">Mínimo 6 caracteres</small>
+      <div class="error" *ngIf="passwordCtrl.invalid && (passwordCtrl.touched || userForm.submitted)">
+        <small *ngIf="passwordCtrl.hasError('required')">La contraseña es obligatoria.</small>
+        <small *ngIf="passwordCtrl.hasError('minlength')">Mínimo 6 caracteres.</small>
+        <small *ngIf="passwordCtrl.hasError('maxlength')">Máximo 100 caracteres.</small>
+        <small *ngIf="passwordCtrl.hasError('pattern')">
+          Debe tener al menos una mayúscula, un número y un símbolo (!@#$%^&*).
+        </small>
       </div>
+      <small class="field-error" *ngIf="fieldErrors['password']">{{ fieldErrors['password'] }}</small>
     </div>
 
+    <!-- Botones -->
     <div class="form-actions">
       <button type="button" routerLink="/dashboard/users" class="btn-cancelar">
         Cancelar
       </button>
-
-      <button
-        type="submit"
-        [disabled]="form.invalid || loading"
-        class="btn-guardar"
-      >
+      <button type="submit" [disabled]="userForm.invalid || loading" class="btn-guardar">
         {{ loading ? 'Guardando...' : 'Crear Usuario' }}
       </button>
     </div>
+
+    <!-- Error global del servidor -->
+    <div *ngIf="serverError" class="server-error">{{ serverError }}</div>
 
   </form>
 </div>

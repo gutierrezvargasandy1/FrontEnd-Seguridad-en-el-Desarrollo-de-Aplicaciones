@@ -1,6 +1,13 @@
-:host { display: block; width: 60%; }
+.user-list-container {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
 
-.user-list-container { max-width: 100%; }
+:host {
+  display: block;
+  width: 60%;
+}
 
 .user-list-header {
   display: flex;
@@ -28,7 +35,9 @@
   transition: background-color 0.2s;
 }
 
-.btn-agregar:hover { background-color: #1a1560; }
+.btn-agregar:hover {
+  background-color: #1a1560;
+}
 
 .user-list {
   list-style: none;
@@ -44,31 +53,31 @@
 .user-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 16px 24px;
   border-bottom: 1px solid #f0f0f0;
+  background-color: #ffffff;
   transition: background 0.15s;
   gap: 12px;
 }
 
-.user-item:last-child { border-bottom: none; }
-.user-item:hover { background-color: #fafafa; }
-
-.user-info {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
+.user-item:last-child {
+  border-bottom: none;
 }
 
-.user-name {
+.user-item:hover {
+  background-color: #fafafa;
+}
+
+.user-link {
+  flex: 1;
   font-size: 15px;
-  font-weight: 500;
   color: #1a1a1a;
+  cursor: pointer;
+  transition: color 0.15s;
 }
 
-.user-username {
-  font-size: 12px;
-  color: #888888;
+.user-link:hover {
+  color: #251f81;
 }
 
 .user-actions {
@@ -76,7 +85,7 @@
   gap: 10px;
 }
 
-.btn-ver {
+.btn-update {
   padding: 7px 16px;
   font-size: 13px;
   font-weight: 500;
@@ -88,7 +97,10 @@
   transition: background-color 0.2s, color 0.2s;
 }
 
-.btn-ver:hover { background-color: #251f81; color: #ffffff; }
+.btn-update:hover {
+  background-color: #251f81;
+  color: #ffffff;
+}
 
 .btn-eliminar {
   padding: 7px 16px;
@@ -102,4 +114,7 @@
   transition: background-color 0.2s, color 0.2s;
 }
 
-.btn-eliminar:hover { background-color: #a32d2d; color: #ffffff; }
+.btn-eliminar:hover {
+  background-color: #a32d2d;
+  color: #ffffff;
+}

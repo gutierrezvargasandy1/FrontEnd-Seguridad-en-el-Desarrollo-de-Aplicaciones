@@ -1,4 +1,5 @@
-<div class="user-detail-container" *ngIf="user">
+<!-- Contenido cuando hay usuario y no hay error -->
+<div class="user-detail-container" *ngIf="!loading && user && !serverError">
   <div class="detail-header">
     <h2>Detalle de Usuario</h2>
     <button routerLink="/dashboard/users" class="btn-volver">← Volver</button>
@@ -32,5 +33,13 @@
   </div>
 </div>
 
+<!-- Estado de carga -->
 <div *ngIf="loading" class="loading-text">Cargando usuario...</div>
-<div *ngIf="error" class="msg-error">{{ error }}</div>
+
+<!-- Error global -->
+<div *ngIf="serverError" class="msg-error">{{ serverError }}</div>
+
+<!-- Si no hay usuario, no hay carga y no hay error -->
+<div *ngIf="!loading && !user && !serverError" class="empty-msg">
+  No se encontró el usuario.
+</div>

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 export interface User {
   id: number;
@@ -9,7 +10,6 @@ export interface User {
   username: string;
   created_at: string | Date;
   hash?: string | null;
-
 }
 
 export interface CreateUserDto {
@@ -25,44 +25,99 @@ export interface UpdateUserDto {
   username: string;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
-export class UserService {
+export interface UserError {
+  userMessage: string;
+  fieldErrors?: { [key: string]: string };
+}
 
-  private API = 'http://localhost:3000/api/users';
-  private accessToken: string | null = null;
+@Injectable({ providedIn: 'root' })
+export class UserService {
+  private readonly API = 'http://localhost:3000/api/users';
 
   constructor(private http: HttpClient) {}
 
-
   createUser(user: CreateUserDto): Observable<User> {
-    return this.http.post<User>(`${this.API}`, user, { withCredentials: true });
+    return this.http.post<User>(`${this.API}`, user, { withCredentials: true })
+      .pipe(catchError(err => this.handleUserError(err)));
   }
 
   updateProfile(updateUserDto: UpdateUserDto): Observable<User> {
-    return this.http.patch<User>(`${this.API}/profile`, updateUserDto, { withCredentials: true });
+    return this.http.patch<User>(`${this.API}/profile`, updateUserDto, { withCredentials: true })
+      .pipe(catchError(err => this.handleUserError(err)));
   }
 
   deleteProfile(): Observable<any> {
-    return this.http.delete(`${this.API}/profile`, { withCredentials: true });
+    return this.http.delete(`${this.API}/profile`, { withCredentials: true })
+      .pipe(catchError(err => this.handleUserError(err)));
   }
 
   getUserById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.API}/${id}`, { withCredentials: true });
+    return this.http.get<User>(`${this.API}/${id}`, { withCredentials: true })
+      .pipe(catchError(err => this.handleUserError(err)));
   }
 
-  getUsers() {
-  return this.http.get<User[]>(`${this.API}`, { withCredentials: true });
-}
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.API}`, { withCredentials: true })
+      .pipe(catchError(err => this.handleUserError(err)));
+  }
 
- deleteUser(id: number) {
-  return this.http.delete(`${this.API}/${id}`, { withCredentials: true });
-}
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete(`${this.API}/${id}`, { withCredentials: true })
+      .pipe(catchError(err => this.handleUserError(err)));
+  }
 
-updateUserById(id: number, dto: UpdateUserDto): Observable<User> {
-  return this.http.patch<User>(`${this.API}/${id}`, dto, { withCredentials: true });
-}
+  updateUserById(id: number, dto: UpdateUserDto): Observable<User> {
+    return this.http.patch<User>(`${this.API}/${id}`, dto, { withCredentials: true })
+      .pipe(catchError(err => this.handleUserError(err)));
+  }
+
+  // --------------------------------------------------------------
+  // Manejo de errores para usuarios
+  // --------------------------------------------------------------
+  private handleUserError(err: any): Observable<never> {
+    const normalized = err as { status: number; userMessage: string; originalError?: any };
+    if (normalized.userMessage) {
+      const fieldErrors = this.extractFieldErrorsFromOriginal(normalized.originalError);
+      if (Object.keys(fieldErrors).length > 0) {
+        return throwError(() => ({ userMessage: 'Errores en el formulario', fieldErrors } as UserError));
+      }
+      return throwError(() => ({ userMessage: normalized.userMessage } as UserError));
+    }
+    return throwError(() => ({
+      userMessage: 'Error en la operación. Intente más tarde.'
+    } as UserError));
+  }
 
 
+  private extractFieldErrorsFromOriginal(originalError: any): { [key: string]: string } {
+    if (!originalError) return {};
+    try {
+      let body = originalError.error;
+      if (typeof body === 'string') {
+        body = JSON.parse(body);
+      }
+      if (body?.fieldErrors && typeof body.fieldErrors === 'object') {
+        const sanitized: { [key: string]: string } = {};
+        for (const [key, value] of Object.entries(body.fieldErrors)) {
+          sanitized[key] = String(value).replace(/<[^>]*>/g, '').slice(0, 200);
+        }
+        return sanitized;
+      }
+      if (Array.isArray(body?.message) && body.message.length) {
+        const errors: { [key: string]: string } = {};
+        for (const msg of body.message) {
+          const lowerMsg = msg.toLowerCase();
+          if (lowerMsg.includes('nombre')) errors['name'] = msg;
+          else if (lowerMsg.includes('apellido')) errors['lastname'] = msg;
+          else if (lowerMsg.includes('usuario') || lowerMsg.includes('username')) errors['username'] = msg;
+          else if (lowerMsg.includes('contraseña') || lowerMsg.includes('password')) errors['password'] = msg;
+          else {
+            return {};
+          }
+        }
+        return errors;
+      }
+    } catch (e) {}
+    return {};
+  }
 }

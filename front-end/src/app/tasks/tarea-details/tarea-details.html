@@ -1,4 +1,5 @@
-<div class="tarea-details-container" *ngIf="task">
+<!-- Contenido cuando hay tarea y no hay error -->
+<div class="tarea-details-container" *ngIf="!loading && task && !serverError">
   <h2>Detalles de la Tarea</h2>
 
   <p><strong>Nombre:</strong> {{ task.name }}</p>
@@ -7,4 +8,15 @@
   <p><strong>Fecha de creación:</strong> {{ task.createdAt | date:'short' }}</p>
 
   <button routerLink="/dashboard/tasks">Volver a la lista</button>
+</div>
+
+<!-- Estado de carga -->
+<div *ngIf="loading" class="loading-msg">Cargando detalles de la tarea...</div>
+
+<!-- Error global -->
+<div *ngIf="serverError" class="server-error">{{ serverError }}</div>
+
+<!-- Si no hay tarea, no hay carga y no hay error -->
+<div *ngIf="!loading && !task && !serverError" class="empty-msg">
+  No se encontró la tarea.
 </div>

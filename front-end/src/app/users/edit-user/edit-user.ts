@@ -1,22 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
-import { UserService, User } from '../../services/user';
+import { UserService, User, UserError } from '../../services/user';
 
 @Component({
   selector: 'app-edit-user',
   standalone: false,
   templateUrl: './edit-user.html',
-  styleUrls: ['./edit-user.css'],
+  styleUrls: ['./edit-user.css']
 })
 export class EditUser implements OnInit {
-
   user: User | null = null;
-
-  loading: boolean = false;
-  error: string = '';
-  successMessage: string = '';
-  errorMessage: string = '';
+  loading = false;
+  serverError = '';
+  successMessage = '';
+  fieldErrors: { [key: string]: string } = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -24,63 +22,60 @@ export class EditUser implements OnInit {
     private userService: UserService
   ) {}
 
-  private extractError(err: any): string {
-    let body = err.error;
-
-    if (typeof body === 'string') {
-      try { body = JSON.parse(body); } catch { return body; }
-    }
-
-    const msg = body?.message;
-    return Array.isArray(msg) ? msg[0] : msg || body?.error || String(err.status);
-  }
-
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-
-    if (!id) {
-      this.error = 'ID inválido';
+    if (!id || isNaN(id)) {
+      this.serverError = 'ID de usuario inválido.';
       return;
     }
 
     this.loading = true;
-
     this.userService.getUserById(id).subscribe({
-      next: (data) => {
-        this.user = data;
+      next: (user) => {
+        this.user = user;
         this.loading = false;
       },
-      error: (err) => {
-        this.error = this.extractError(err);
+      error: (err: UserError) => {
+        this.serverError = err.userMessage;
         this.loading = false;
       }
     });
   }
 
   updateUser(form: NgForm): void {
-    if (form.invalid || !this.user) return;
+    // Resetear mensajes previos
+    this.serverError = '';
+    this.fieldErrors = {};
+    this.successMessage = '';
+
+    if (form.invalid || !this.user) {
+      form.control.markAllAsTouched();
+      return;
+    }
 
     this.loading = true;
-    this.successMessage = '';
-    this.errorMessage = '';
 
     const dto = {
       name: this.user.name,
       lastname: this.user.lastname,
-      username: this.user.username,
+      username: this.user.username
     };
 
     this.userService.updateUserById(this.user.id, dto).subscribe({
-      next: (res: any) => {
-        this.successMessage = res?.message || 'Actualizado';
+      next: () => {
+        this.successMessage = 'Usuario actualizado correctamente';
         this.loading = false;
         setTimeout(() => {
           this.router.navigate(['/dashboard/users']);
         }, 1500);
       },
-      error: (err) => {
-        this.errorMessage = this.extractError(err);
+      error: (err: UserError) => {
         this.loading = false;
+        if (err.fieldErrors) {
+          this.fieldErrors = err.fieldErrors;
+        } else {
+          this.serverError = err.userMessage;
+        }
       }
     });
   }

@@ -11,7 +11,6 @@ body {
   background-color: #f4f6f8;
 }
 
-/* Esto es la clave — empuja TODO componente hijo del router-outlet */
 router-outlet + * {
   display: block;
   margin-left: 220px;

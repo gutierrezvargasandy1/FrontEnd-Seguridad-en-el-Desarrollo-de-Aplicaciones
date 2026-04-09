@@ -1,17 +1,16 @@
-import { Component } from '@angular/core';
-import { TaskService } from '../../services/task';
+import { Component, OnInit } from '@angular/core';
+import { TaskService, Task, TaskError } from '../../services/task';
 
 @Component({
   selector: 'app-list',
   standalone: false,
   templateUrl: './list.html',
-  styleUrl: './list.css',
+  styleUrls: ['./list.css']
 })
-export class List {
-
-  tasks: any[] = [];
-  loading: boolean = false;
-  error: string = '';
+export class List implements OnInit {
+  tasks: Task[] = [];
+  loading = false;
+  serverError = '';
 
   constructor(private taskService: TaskService) {}
 
@@ -19,49 +18,34 @@ export class List {
     this.loadTasks();
   }
 
-  private extractError(err: any): string {
-    try {
-      const body = typeof err.error === 'string' ? JSON.parse(err.error) : err.error;
-      const msg = body?.message;
-      if (Array.isArray(msg)) return msg[0];
-      if (typeof msg === 'string') return msg;
-      if (typeof body === 'string') return body;
-      return String(err.status || 'Error');
-    } catch {
-      return String(err.status || 'Error');
-    }
-  }
-
-  loadTasks() {
+  loadTasks(): void {
     this.loading = true;
-    this.error = '';
+    this.serverError = '';
 
     this.taskService.getTasks().subscribe({
-      next: (res) => {
-        this.tasks = Array.isArray(res) ? res : [];
+      next: (tasks) => {
+        this.tasks = tasks;
         this.loading = false;
       },
-      error: (err) => {
-        this.error = this.extractError(err);
+      error: (err: TaskError) => {
+        this.serverError = err.userMessage;
         this.loading = false;
       }
     });
   }
 
-deleteTask(id: number) {
-  if (!id) return;
+  deleteTask(id: number): void {
+    if (!id) return;
+    const confirmar = confirm('¿Estás seguro de que deseas eliminar esta tarea?');
+    if (!confirmar) return;
 
-  const confirmar = confirm('¿Estás seguro de que deseas eliminar esta tarea?');
-
-  if (!confirmar) return;
-
-  this.taskService.deleteTask(id).subscribe({
-    next: () => {
-      this.loadTasks();
-    },
-    error: (err) => {
-      this.error = this.extractError(err);
-    }
-  });
-}
+    this.taskService.deleteTask(id).subscribe({
+      next: () => {
+        this.loadTasks();
+      },
+      error: (err: TaskError) => {
+        this.serverError = err.userMessage;
+      }
+    });
+  }
 }
