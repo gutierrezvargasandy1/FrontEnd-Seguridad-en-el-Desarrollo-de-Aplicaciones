@@ -90,6 +90,20 @@
   transition: background-color 0.2s;
 }
 
+.btnDelete{
+    padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  background-color: #251f81;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btnDelete:hover {background-color: #1a1560;}
+
 .btn-editar:hover { background-color: #1a1560; }
 
 .loading-text {

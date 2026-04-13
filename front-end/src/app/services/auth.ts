@@ -79,6 +79,13 @@ export class AuthService {
     );
   }
 
+  deleteUser(): Observable<void>{
+    return this.http.delete<void>(`${this.API}/delete`, { withCredentials: true })
+      .pipe(catchError(err => this.handleMeError(err)));
+
+
+  }
+
   me(): Observable<User> {
     return this.http.get<User>(`${this.API}/me`, { withCredentials: true })
       .pipe(catchError(err => this.handleMeError(err)));

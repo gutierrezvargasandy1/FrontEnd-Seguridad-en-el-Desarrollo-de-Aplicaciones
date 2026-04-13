@@ -14,10 +14,7 @@
   <ul class="user-list" *ngIf="!loading && users.length > 0">
     <li *ngFor="let user of users" class="user-item">
       <span [routerLink]="['/dashboard/users', user.id]" class="user-link">{{ user.name }} {{ user.lastname }}</span>
-      <div class="user-actions">
-        <button (click)="deleteUser(user.id)" class="btn-eliminar">Eliminar</button>
-        <button [routerLink]="['/dashboard/users/edit', user.id]" class="btn-update">Editar</button>
-      </div>
+
     </li>
   </ul>
 
