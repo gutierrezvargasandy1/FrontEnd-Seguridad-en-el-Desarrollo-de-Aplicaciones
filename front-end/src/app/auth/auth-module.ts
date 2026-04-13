@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Profile } from './profile/profile';
 import { RouterModule } from '@angular/router';
 import { Register } from './register/register';
+import { UpdateUser } from './update-user/update-user';
 
 
 
@@ -12,7 +13,8 @@ import { Register } from './register/register';
   declarations: [
     Login,
     Profile,
-    Register
+    Register,
+    UpdateUser
   ],
   imports: [
     CommonModule,

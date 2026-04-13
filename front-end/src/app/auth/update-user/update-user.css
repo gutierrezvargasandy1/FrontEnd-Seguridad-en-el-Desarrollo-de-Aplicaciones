@@ -1,0 +1,107 @@
+
+:host {
+  display: block;
+  width: 60%;
+}
+
+/* Contenedor principal */
+.register-container {
+  max-width: 560px;
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  padding: 32px 36px;
+}
+
+/* Título */
+.register-container h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 28px;
+}
+
+/* Grupo de campos */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+/* Labels */
+.form-group label {
+  font-size: 13px;
+  color: #888888;
+  margin-bottom: 6px;
+}
+
+/* Inputs */
+.form-group input {
+  padding: 9px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #251f81;
+  box-shadow: 0 0 0 2px rgba(37, 31, 129, 0.08);
+}
+
+/* Errores de validación */
+.form-group small {
+  font-size: 12px;
+  color: #a32d2d;
+  margin-top: 4px;
+}
+
+/* Errores del backend por campo */
+.field-error {
+  font-size: 12px;
+  color: #a32d2d;
+  margin-top: 2px;
+}
+
+/* Mensajes globales */
+.message {
+  font-size: 13px;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+
+.server-error {
+  color: #a32d2d;
+  background-color: #fcebeb;
+  border: 1px solid #f5c1c1;
+}
+
+.success-msg {
+  color: #1e6b2d;
+  background-color: #e9f7ee;
+  border: 1px solid #b7e4c7;
+}
+
+/* Botón */
+button[type="submit"] {
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  background-color: #251f81;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+button[type="submit"]:hover {
+  background-color: #1a1560;
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

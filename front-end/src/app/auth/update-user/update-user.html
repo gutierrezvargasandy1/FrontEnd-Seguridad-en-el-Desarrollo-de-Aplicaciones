@@ -1,0 +1,81 @@
+<div class="register-container">
+  <h2>Editar Perfil</h2>
+
+  <form #updateForm="ngForm" (ngSubmit)="onUpdate(updateForm)">
+
+    <!-- Nombre -->
+    <div class="form-group">
+      <label>Nombre</label>
+      <input
+        type="text"
+        name="name"
+        [(ngModel)]="name"
+        #nameCtrl="ngModel"
+        required
+        minlength="3"
+        maxlength="50"
+        pattern="[a-zA-ZáéíóúñÑ\s]+"
+      />
+      <small *ngIf="nameCtrl.invalid && (nameCtrl.touched || updateForm.submitted)">
+        <span *ngIf="nameCtrl.hasError('required')">El nombre es obligatorio.</span>
+        <span *ngIf="nameCtrl.hasError('minlength')">Mínimo 3 caracteres.</span>
+        <span *ngIf="nameCtrl.hasError('maxlength')">Máximo 50 caracteres.</span>
+        <span *ngIf="nameCtrl.hasError('pattern')">Solo letras y espacios.</span>
+      </small>
+      <small class="field-error" *ngIf="fieldErrors['name']">{{ fieldErrors['name'] }}</small>
+    </div>
+
+    <!-- Apellido -->
+    <div class="form-group">
+      <label>Apellido</label>
+      <input
+        type="text"
+        name="lastname"
+        [(ngModel)]="lastname"
+        #lastnameCtrl="ngModel"
+        required
+        minlength="3"
+        maxlength="50"
+        pattern="[a-zA-ZáéíóúñÑ\s]+"
+      />
+      <small *ngIf="lastnameCtrl.invalid && (lastnameCtrl.touched || updateForm.submitted)">
+        <span *ngIf="lastnameCtrl.hasError('required')">El apellido es obligatorio.</span>
+        <span *ngIf="lastnameCtrl.hasError('minlength')">Mínimo 3 caracteres.</span>
+        <span *ngIf="lastnameCtrl.hasError('maxlength')">Máximo 50 caracteres.</span>
+        <span *ngIf="lastnameCtrl.hasError('pattern')">Solo letras y espacios.</span>
+      </small>
+      <small class="field-error" *ngIf="fieldErrors['lastname']">{{ fieldErrors['lastname'] }}</small>
+    </div>
+
+    <!-- Usuario (correo) -->
+    <div class="form-group">
+      <label>Correo electrónico</label>
+      <input
+        type="email"
+        name="username"
+        [(ngModel)]="username"
+        #usernameCtrl="ngModel"
+        required
+        email
+        minlength="3"
+        maxlength="50"
+      />
+      <small *ngIf="usernameCtrl.invalid && (usernameCtrl.touched || updateForm.submitted)">
+        <span *ngIf="usernameCtrl.hasError('required')">El correo es obligatorio.</span>
+        <span *ngIf="usernameCtrl.hasError('email')">Ingrese un correo válido.</span>
+        <span *ngIf="usernameCtrl.hasError('minlength')">Mínimo 3 caracteres.</span>
+        <span *ngIf="usernameCtrl.hasError('maxlength')">Máximo 50 caracteres.</span>
+      </small>
+      <small class="field-error" *ngIf="fieldErrors['username']">{{ fieldErrors['username'] }}</small>
+    </div>
+
+    <!-- Mensajes globales -->
+    <div *ngIf="serverError" class="message server-error">{{ serverError }}</div>
+    <div *ngIf="successMessage" class="message success-msg">{{ successMessage }}</div>
+
+    <button type="submit" [disabled]="loading || updateForm.invalid">
+      {{ loading ? 'Guardando...' : 'Guardar Cambios' }}
+    </button>
+
+  </form>
+</div>

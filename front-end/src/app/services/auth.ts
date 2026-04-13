@@ -98,6 +98,16 @@ export class AuthService {
   private setAccessToken(token: string): void {
     this.accessToken = token;
   }
+  
+  updateProfile(data: Partial<User>): Observable<User> {
+  return this.http.put<User>(
+    `${this.API}/me`,
+    data,
+    { withCredentials: true }
+  ).pipe(
+    catchError(err => this.handleMeError(err))
+  );
+}
 
   // --------------------------------------------------------------
   // Manejo  de errores 

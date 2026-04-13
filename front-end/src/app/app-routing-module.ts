@@ -10,6 +10,7 @@ import { Register } from './auth/register/register';
 import { UpdateTask } from './tasks/update-task/update-task';
 import { CreateUser } from './users/create-user/create-user';
 import { ListaUser } from './users/lista/lista';
+import { UpdateUser } from './auth/update-user/update-user';
 
 const routes: Routes = [
   {path: 'login',component: Login},
@@ -25,6 +26,7 @@ const routes: Routes = [
       { path: 'users', component: ListaUser },
       { path: 'users/create', component: CreateUser },
       { path: 'tasks/edit/:id', component: UpdateTask},
+      { path: 'profile/update', component: UpdateUser }
 
     ]
 },

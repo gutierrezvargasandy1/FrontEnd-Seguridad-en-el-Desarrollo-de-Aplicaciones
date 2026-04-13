@@ -13,7 +13,7 @@ import { UsersModule } from './users/users-module';
 
 @NgModule({
   declarations: [
-    App,
+    App
   ],
   imports: [
     BrowserModule,

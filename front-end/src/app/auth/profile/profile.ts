@@ -36,13 +36,12 @@ export class Profile implements OnInit {
       if (tasks.length > 0) {
         this.loading = false;
         this.serverError = 'No puedes eliminar el perfil mientras existan tareas asociadas.';
-        this.router.navigate(['/tasks']);
+        this.router.navigate(['dashboard/tasks']);
         alert(this.serverError);
 
         return;
       }
 
-      // 👇 SOLO SI NO TIENE TAREAS
       this.authService.deleteUser().subscribe({
         next: () => {
           this.user = null;
