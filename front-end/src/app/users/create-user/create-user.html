@@ -16,6 +16,7 @@
         maxlength="50"
         pattern="[a-zA-ZáéíóúñÑ\s]+"
         placeholder="Nombre"
+        (blur)="trimField('name')"
       />
       <div class="error" *ngIf="nameCtrl.invalid && (nameCtrl.touched || userForm.submitted)">
         <small *ngIf="nameCtrl.hasError('required')">El nombre es obligatorio.</small>
@@ -39,6 +40,7 @@
         maxlength="50"
         pattern="[a-zA-ZáéíóúñÑ\s]+"
         placeholder="Apellido"
+        (blur)="trimField('lastname')"
       />
       <div class="error" *ngIf="lastnameCtrl.invalid && (lastnameCtrl.touched || userForm.submitted)">
         <small *ngIf="lastnameCtrl.hasError('required')">El apellido es obligatorio.</small>
@@ -62,6 +64,7 @@
         minlength="5"
         maxlength="100"
         placeholder="usuario@dominio.com"
+        (blur)="trimField('username')"
       />
       <div class="error" *ngIf="usernameCtrl.invalid && (usernameCtrl.touched || userForm.submitted)">
         <small *ngIf="usernameCtrl.hasError('required')">El correo es obligatorio.</small>
@@ -72,7 +75,7 @@
       <small class="field-error" *ngIf="fieldErrors['username']">{{ fieldErrors['username'] }}</small>
     </div>
 
-    <!-- PASSWORD  -->
+    <!-- PASSWORD -->
     <div class="form-group">
       <label>Contraseña</label>
       <input

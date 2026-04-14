@@ -15,6 +15,7 @@
         minlength="3"
         maxlength="50"
         pattern="[a-zA-ZáéíóúñÑ\s]+"
+        (blur)="trimField('name')"
       />
       <small *ngIf="nameCtrl.invalid && (nameCtrl.touched || registerForm.submitted)">
         <span *ngIf="nameCtrl.hasError('required')">El nombre es obligatorio.</span>
@@ -37,6 +38,7 @@
         minlength="3"
         maxlength="50"
         pattern="[a-zA-ZáéíóúñÑ\s]+"
+        (blur)="trimField('lastname')"
       />
       <small *ngIf="lastnameCtrl.invalid && (lastnameCtrl.touched || registerForm.submitted)">
         <span *ngIf="lastnameCtrl.hasError('required')">El apellido es obligatorio.</span>
@@ -47,7 +49,7 @@
       <small class="field-error" *ngIf="fieldErrors['lastname']">{{ fieldErrors['lastname'] }}</small>
     </div>
 
-    <!-- Usuario (correo electrónico) -->
+    <!-- Usuario -->
     <div class="form-group">
       <label>Correo electrónico</label>
       <input
@@ -59,10 +61,11 @@
         email
         minlength="3"
         maxlength="50"
+        (blur)="trimField('username')"
       />
       <small *ngIf="usernameCtrl.invalid && (usernameCtrl.touched || registerForm.submitted)">
         <span *ngIf="usernameCtrl.hasError('required')">El correo es obligatorio.</span>
-        <span *ngIf="usernameCtrl.hasError('email')">Ingrese un correo válido (ej: usuario@dominio.com).</span>
+        <span *ngIf="usernameCtrl.hasError('email')">Ingrese un correo válido.</span>
         <span *ngIf="usernameCtrl.hasError('minlength')">Mínimo 3 caracteres.</span>
         <span *ngIf="usernameCtrl.hasError('maxlength')">Máximo 50 caracteres.</span>
       </small>
@@ -87,7 +90,7 @@
         <span *ngIf="passwordCtrl.hasError('minlength')">Mínimo 6 caracteres.</span>
         <span *ngIf="passwordCtrl.hasError('maxlength')">Máximo 100 caracteres.</span>
         <span *ngIf="passwordCtrl.hasError('pattern')">
-          Debe tener al menos una mayúscula, un número y un símbolo (!@#$%^&*).
+          Debe tener al menos una mayúscula, un número y un símbolo.
         </span>
       </small>
       <small class="field-error" *ngIf="fieldErrors['password']">{{ fieldErrors['password'] }}</small>
@@ -108,7 +111,6 @@
       </small>
     </div>
 
-    <!-- Mensajes globales (usando la clase .message del CSS) -->
     <div *ngIf="serverError" class="message server-error">{{ serverError }}</div>
     <div *ngIf="successMessage" class="message success-msg">{{ successMessage }}</div>
 

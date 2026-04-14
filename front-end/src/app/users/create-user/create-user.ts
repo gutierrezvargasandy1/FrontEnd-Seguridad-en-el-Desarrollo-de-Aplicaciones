@@ -27,7 +27,10 @@ export class CreateUser {
   ) {}
 
   createUser(form: NgForm): void {
-    // Limpiar errores previos
+    this.userData.name = this.userData.name?.trim();          // ← primero
+    this.userData.lastname = this.userData.lastname?.trim();  // ← primero
+    this.userData.username = this.userData.username?.trim();  // ← primero
+
     this.serverError = '';
     this.fieldErrors = {};
 
@@ -53,5 +56,19 @@ export class CreateUser {
         }
       }
     });
+  }
+
+  trimField(field: string): void {
+    switch (field) {
+      case 'name':
+        this.userData.name = this.userData.name?.trim();
+        break;
+      case 'lastname':
+        this.userData.lastname = this.userData.lastname?.trim();
+        break;
+      case 'username':
+        this.userData.username = this.userData.username?.trim();
+        break;
+    }
   }
 }

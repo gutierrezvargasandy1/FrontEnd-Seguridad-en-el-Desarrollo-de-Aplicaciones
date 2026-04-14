@@ -51,6 +51,8 @@ export class UpdateTask implements OnInit {
   }
 
   onSubmit(form: NgForm): void {
+    this.name = this.name?.trim();         
+    this.description = this.description?.trim();  
     this.serverError = '';
     this.fieldErrors = {};
     this.successMessage = '';
@@ -63,8 +65,8 @@ export class UpdateTask implements OnInit {
     this.loading = true;
 
     const updatedTask = {
-      name: this.name.trim(),
-      description: this.description?.trim() || '',
+      name: this.name,
+      description: this.description || '',
       priority: this.priority
     };
 
@@ -83,5 +85,16 @@ export class UpdateTask implements OnInit {
         }
       }
     });
+  }
+
+  trimField(field: string): void {
+    switch (field) {
+      case 'name':
+        this.name = this.name?.trim();
+        break;
+      case 'description':
+        this.description = this.description?.trim();
+        break;
+    }
   }
 }

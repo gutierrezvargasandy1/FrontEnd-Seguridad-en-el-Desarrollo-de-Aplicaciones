@@ -38,21 +38,4 @@ export class ListaUser implements OnInit {
     });
   }
 
-  deleteUser(id: number): void {
-    if (!confirm('¿Eliminar este usuario?')) return;
-
-    this.loading = true;
-    this.serverError = '';
-
-    this.userService.deleteUser(id).subscribe({
-      next: () => {
-        this.users = this.users.filter(u => u.id !== id);
-        this.loading = false;
-      },
-      error: (err: UserError) => {
-        this.serverError = err.userMessage;
-        this.loading = false;
-      }
-    });
-  }
 }

@@ -15,6 +15,7 @@
         minlength="3"
         maxlength="50"
         pattern="^[a-zA-Z0-9áéíóúñÑ\s\-_,.]+$"
+        (blur)="trimField('name')"
       />
       <small class="error" *ngIf="nameCtrl.invalid && (nameCtrl.touched || taskForm.submitted)">
         <span *ngIf="nameCtrl.hasError('required')">El nombre es obligatorio.</span>
@@ -25,26 +26,27 @@
       <small class="field-error" *ngIf="fieldErrors['name']">{{ fieldErrors['name'] }}</small>
     </div>
 
-<!-- Descripción -->
-<div class="form-group">
-  <label for="description">Descripción:</label>
-  <textarea
-    id="description"
-    name="description"
-    [(ngModel)]="description"
-    #descCtrl="ngModel"
-    required
-    minlength="3"
-    maxlength="500"
-    placeholder="Escribe una descripción (mínimo 3 caracteres)"
-  ></textarea>
-  <small class="error" *ngIf="descCtrl.invalid && (descCtrl.touched || taskForm.submitted)">
-    <span *ngIf="descCtrl.hasError('required')">La descripción es obligatoria.</span>
-    <span *ngIf="descCtrl.hasError('minlength')">Mínimo 3 caracteres.</span>
-    <span *ngIf="descCtrl.hasError('maxlength')">Máximo 500 caracteres.</span>
-  </small>
-  <small class="field-error" *ngIf="fieldErrors['description']">{{ fieldErrors['description'] }}</small>
-</div>
+    <!-- Descripción -->
+    <div class="form-group">
+      <label for="description">Descripción:</label>
+      <textarea
+        id="description"
+        name="description"
+        [(ngModel)]="description"
+        #descCtrl="ngModel"
+        required
+        minlength="3"
+        maxlength="500"
+        placeholder="Escribe una descripción (mínimo 3 caracteres)"
+        (blur)="trimField('description')"
+      ></textarea>
+      <small class="error" *ngIf="descCtrl.invalid && (descCtrl.touched || taskForm.submitted)">
+        <span *ngIf="descCtrl.hasError('required')">La descripción es obligatoria.</span>
+        <span *ngIf="descCtrl.hasError('minlength')">Mínimo 3 caracteres.</span>
+        <span *ngIf="descCtrl.hasError('maxlength')">Máximo 500 caracteres.</span>
+      </small>
+      <small class="field-error" *ngIf="fieldErrors['description']">{{ fieldErrors['description'] }}</small>
+    </div>
 
     <!-- Prioridad -->
     <div class="form-group checkbox">

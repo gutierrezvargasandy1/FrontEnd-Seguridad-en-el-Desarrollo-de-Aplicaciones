@@ -13,7 +13,7 @@ export class Profile implements OnInit {
   user: User | null = null;
   loading = true;
   serverError = '';
-  fieldErrors: { [key: string]: string } = {}; // Por consistencia, aunque no se use aquí
+  fieldErrors: { [key: string]: string } = {}; 
   tasks: any[] = [];
 
   constructor(private authService: AuthService, private router: Router, private taskService: TaskService) {}

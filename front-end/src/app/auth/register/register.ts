@@ -24,9 +24,13 @@ export class Register {
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   onRegister(form: NgForm): void {
+    this.name = this.name?.trim();          
+    this.lastname = this.lastname?.trim(); 
+    this.username = this.username?.trim();  
+
     this.serverError = '';
     this.fieldErrors = {};
 
@@ -66,5 +70,19 @@ export class Register {
         }
       }
     });
+  }
+
+  trimField(field: string): void {
+    switch (field) {
+      case 'name':
+        this.name = this.name?.trim();
+        break;
+      case 'lastname':
+        this.lastname = this.lastname?.trim();
+        break;
+      case 'username':
+        this.username = this.username?.trim();
+        break;
+    }
   }
 }

@@ -41,35 +41,14 @@ export class UserService {
       .pipe(catchError(err => this.handleUserError(err)));
   }
 
-  updateProfile(updateUserDto: UpdateUserDto): Observable<User> {
-    return this.http.patch<User>(`${this.API}/profile`, updateUserDto, { withCredentials: true })
-      .pipe(catchError(err => this.handleUserError(err)));
-  }
-
-  deleteProfile(): Observable<any> {
-    return this.http.delete(`${this.API}/profile`, { withCredentials: true })
-      .pipe(catchError(err => this.handleUserError(err)));
-  }
-
-  getUserById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.API}/${id}`, { withCredentials: true })
-      .pipe(catchError(err => this.handleUserError(err)));
-  }
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.API}`, { withCredentials: true })
       .pipe(catchError(err => this.handleUserError(err)));
   }
 
-  deleteUser(id: number): Observable<any> {
-    return this.http.delete(`${this.API}/${id}`, { withCredentials: true })
-      .pipe(catchError(err => this.handleUserError(err)));
-  }
 
-  updateUserById(id: number, dto: UpdateUserDto): Observable<User> {
-    return this.http.patch<User>(`${this.API}/${id}`, dto, { withCredentials: true })
-      .pipe(catchError(err => this.handleUserError(err)));
-  }
+
 
   // --------------------------------------------------------------
   // Manejo de errores para usuarios

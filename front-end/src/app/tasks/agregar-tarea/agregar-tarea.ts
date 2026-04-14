@@ -25,6 +25,9 @@ export class AgregarTarea {
   ) {}
 
   agregarTarea(form: NgForm): void {
+    this.name = this.name?.trim();    
+    this.description = this.description?.trim();
+
     this.serverError = '';
     this.fieldErrors = {};
     this.successMessage = '';
@@ -37,8 +40,8 @@ export class AgregarTarea {
     this.loading = true;
 
     const nuevaTarea: CreateTaskDto = {
-      name: this.name.trim(),
-      description: this.description?.trim() || '',
+      name: this.name,
+      description: this.description || '',
       priority: this.priority
     };
 
@@ -58,5 +61,16 @@ export class AgregarTarea {
         }
       }
     });
+  }
+
+  trimField(field: string): void {
+    switch (field) {
+      case 'name':
+        this.name = this.name?.trim();
+        break;
+      case 'description':
+        this.description = this.description?.trim();
+        break;
+    }
   }
 }

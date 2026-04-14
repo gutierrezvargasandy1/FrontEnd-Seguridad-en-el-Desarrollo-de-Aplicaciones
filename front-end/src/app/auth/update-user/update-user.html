@@ -15,6 +15,7 @@
         minlength="3"
         maxlength="50"
         pattern="[a-zA-ZáéíóúñÑ\s]+"
+        (blur)="trimField('name')"
       />
       <small *ngIf="nameCtrl.invalid && (nameCtrl.touched || updateForm.submitted)">
         <span *ngIf="nameCtrl.hasError('required')">El nombre es obligatorio.</span>
@@ -37,6 +38,7 @@
         minlength="3"
         maxlength="50"
         pattern="[a-zA-ZáéíóúñÑ\s]+"
+        (blur)="trimField('lastname')"
       />
       <small *ngIf="lastnameCtrl.invalid && (lastnameCtrl.touched || updateForm.submitted)">
         <span *ngIf="lastnameCtrl.hasError('required')">El apellido es obligatorio.</span>
@@ -47,7 +49,7 @@
       <small class="field-error" *ngIf="fieldErrors['lastname']">{{ fieldErrors['lastname'] }}</small>
     </div>
 
-    <!-- Usuario (correo) -->
+    <!-- Usuario -->
     <div class="form-group">
       <label>Correo electrónico</label>
       <input
@@ -59,6 +61,7 @@
         email
         minlength="3"
         maxlength="50"
+        (blur)="trimField('username')"
       />
       <small *ngIf="usernameCtrl.invalid && (usernameCtrl.touched || updateForm.submitted)">
         <span *ngIf="usernameCtrl.hasError('required')">El correo es obligatorio.</span>
