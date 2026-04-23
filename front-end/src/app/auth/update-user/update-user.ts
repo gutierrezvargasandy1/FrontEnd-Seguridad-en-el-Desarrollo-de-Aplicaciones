@@ -1,94 +1,169 @@
+// app/dashboard/profile/update-user/update-user.ts
 import { Component, OnInit } from '@angular/core';
-import { AuthService, LoginError, User } from '../../services/auth';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Auth, ChangePasswordData } from '../../services/auth.service/auth';
+import { LoadingService } from '../../core/interceptors/loading.service';
+import { NotificationService } from '../../services/notification.service';
+import { AppError } from '../../core/interceptors/error.interseptor';
 
 @Component({
   selector: 'app-update-user',
   standalone: false,
   templateUrl: './update-user.html',
-  styleUrl: './update-user.css',
+  styleUrls: ['./update-user.css'],
 })
 export class UpdateUser implements OnInit {
-
+  // Datos del perfil
   name = '';
   lastname = '';
   username = '';
 
-  loading = false;
-  successMessage = '';
-  serverError = '';
-  fieldErrors: { [key: string]: string } = {};
+  // Datos para cambio de contraseña
+  currentPassword = '';
+  newPassword = '';
+  confirmNewPassword = '';
 
-  constructor(private authService: AuthService, private router: Router) { }
+  // Estados
+  serverError = '';
+  fieldErrors: Record<string, string> = {};
+  showPasswordForm = false;
+
+  constructor(
+    private authService: Auth,
+    private router: Router,
+    public loadingService: LoadingService,
+    private notification: NotificationService
+  ) {}
 
   ngOnInit(): void {
     this.loadUser();
   }
 
+  // ============ CARGAR USUARIO ============
   loadUser(): void {
-    this.authService.me().subscribe({
-      next: (user: User) => {
-        this.name = user.name;
+    this.authService.getCurrentUser().subscribe({
+      next: (user) => {
+        this.name     = user.name;
         this.lastname = user.lastname;
         this.username = user.username;
       },
-      error: (err: LoginError) => {
-        this.serverError = err.userMessage;
+      error: (err: AppError) => {
+        // El interceptor ya mostró el toast
+        this.serverError = err.userMessage ?? 'Error al cargar el perfil.';
       }
     });
   }
 
+  // ============ ACTUALIZAR PERFIL ============
   onUpdate(form: NgForm): void {
-    this.name = this.name?.trim();          
-    this.lastname = this.lastname?.trim();  
-    this.username = this.username?.trim();  
+    this.clearState();
 
-    this.serverError = '';
-    this.successMessage = '';
-    this.fieldErrors = {};
+    this.name     = this.name.trim();
+    this.lastname = this.lastname.trim();
+    this.username = this.username.trim();
 
     if (form.invalid) {
       form.control.markAllAsTouched();
       return;
     }
 
-    this.loading = true;
-
-    const data = {
-      name: this.name,
+    this.authService.updateProfile({
+      name:     this.name,
       lastname: this.lastname,
       username: this.username
-    };
-
-    this.authService.updateProfile(data).subscribe({
+    }).subscribe({
       next: () => {
-        this.loading = false;
-        this.successMessage = 'Perfil actualizado correctamente';
-        this.router.navigate(['/dashboard/profile']);
+        this.notification.showSuccess('Perfil actualizado correctamente');
+        setTimeout(() => this.router.navigate(['/dashboard/profile']), 1500);
       },
-      error: (err: LoginError) => {
-        this.loading = false;
-        if ((err as any).fieldErrors) {
-          this.fieldErrors = (err as any).fieldErrors;
-        } else {
-          this.serverError = err.userMessage;
+      error: (err: AppError) => {
+        // El interceptor ya mostró el toast
+        if (err.fieldErrors) {
+          this.fieldErrors = this.normalizeFieldErrors(err.fieldErrors);
         }
+        this.serverError = err.userMessage ?? 'No pudimos actualizar el perfil.';
       }
     });
   }
 
-  trimField(field: string): void {
-    switch (field) {
-      case 'name':
-        this.name = this.name?.trim();
-        break;
-      case 'lastname':
-        this.lastname = this.lastname?.trim();
-        break;
-      case 'username':
-        this.username = this.username?.trim();
-        break;
+  // ============ CAMBIAR CONTRASEÑA ============
+  onChangePassword(form: NgForm): void {
+    this.clearState();
+
+    if (form.invalid) {
+      form.control.markAllAsTouched();
+      return;
     }
+
+    if (this.newPassword !== this.confirmNewPassword) {
+      this.serverError = 'Las contraseñas nuevas no coinciden.';
+      return;
+    }
+
+    this.authService.changePassword({
+      currentPassword: this.currentPassword,
+      newPassword:     this.newPassword
+    }).subscribe({
+      next: () => {
+        this.notification.showSuccess('Contraseña actualizada correctamente');
+        this.resetPasswordFields();
+        this.showPasswordForm = false;
+      },
+      error: (err: AppError) => {
+        // El interceptor ya mostró el toast
+        if (err.fieldErrors) {
+          this.fieldErrors = this.normalizeFieldErrors(err.fieldErrors);
+        }
+        this.serverError = err.userMessage ?? 'No pudimos cambiar la contraseña.';
+      }
+    });
+  }
+
+  // ============ UTILIDADES ============
+  trimField(field: keyof Pick<UpdateUser, 'name' | 'lastname' | 'username'>): void {
+    this[field] = this[field].trim();
+  }
+
+  togglePasswordForm(): void {
+    this.showPasswordForm = !this.showPasswordForm;
+    this.clearState();
+    if (!this.showPasswordForm) {
+      this.resetPasswordFields();
+    }
+  }
+
+  // ============ PRIVADOS ============
+  private clearState(): void {
+    this.serverError = '';
+    this.fieldErrors = {};
+  }
+
+  private resetPasswordFields(): void {
+    this.currentPassword  = '';
+    this.newPassword      = '';
+    this.confirmNewPassword = '';
+  }
+
+  private normalizeFieldErrors(
+    details: Record<string, string | string[]>
+  ): Record<string, string> {
+    const result: Record<string, string> = {};
+    for (const [field, messages] of Object.entries(details)) {
+      const key   = this.mapFieldName(field);
+      result[key] = Array.isArray(messages) ? messages.join(', ') : messages;
+    }
+    return result;
+  }
+
+  private mapFieldName(field: string): string {
+    const fieldMap: Record<string, string> = {
+      name:            'name',
+      lastname:        'lastname',
+      username:        'username',
+      currentPassword: 'currentPassword',
+      newPassword:     'newPassword',
+    };
+    return fieldMap[field] ?? field;
   }
 }

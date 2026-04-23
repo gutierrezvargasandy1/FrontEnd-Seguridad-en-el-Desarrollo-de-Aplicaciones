@@ -13,7 +13,26 @@
   <!-- Lista de usuarios -->
   <ul class="user-list" *ngIf="!loading && users.length > 0">
     <li *ngFor="let user of users" class="user-item">
-      <span [routerLink]="['/dashboard/users', user.id]" class="user-link">{{ user.name }} {{ user.lastname }}</span>
+
+      <span
+        [routerLink]="['/dashboard/users', user.id]"
+        class="user-link">
+        {{ user.name }} {{ user.lastname }}
+      </span>
+
+      <div class="actions">
+        <button
+          class="btn-update"
+          [routerLink]="['/dashboard/users/update', user.id]">
+          Actualizar
+        </button>
+
+        <button
+          class="btn-delete"
+          (click)="deleteUser(user.id)">
+          Eliminar
+        </button>
+      </div>
 
     </li>
   </ul>

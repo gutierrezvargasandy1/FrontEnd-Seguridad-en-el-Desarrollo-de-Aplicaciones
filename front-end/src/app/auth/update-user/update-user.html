@@ -1,6 +1,8 @@
+<!-- app/dashboard/profile/update-user/update-user.html -->
 <div class="register-container">
   <h2>Editar Perfil</h2>
 
+  <!-- Formulario de actualización de perfil -->
   <form #updateForm="ngForm" (ngSubmit)="onUpdate(updateForm)">
 
     <!-- Nombre -->
@@ -49,7 +51,7 @@
       <small class="field-error" *ngIf="fieldErrors['lastname']">{{ fieldErrors['lastname'] }}</small>
     </div>
 
-    <!-- Usuario -->
+    <!-- Correo electrónico -->
     <div class="form-group">
       <label>Correo electrónico</label>
       <input
@@ -72,13 +74,111 @@
       <small class="field-error" *ngIf="fieldErrors['username']">{{ fieldErrors['username'] }}</small>
     </div>
 
-    <!-- Mensajes globales -->
-    <div *ngIf="serverError" class="message server-error">{{ serverError }}</div>
-    <div *ngIf="successMessage" class="message success-msg">{{ successMessage }}</div>
+    <!-- Error general del servidor -->
+    <div class="message server-error" *ngIf="serverError && !showPasswordForm">
+      {{ serverError }}
+    </div>
 
-    <button type="submit" [disabled]="loading || updateForm.invalid">
-      {{ loading ? 'Guardando...' : 'Guardar Cambios' }}
+    <button
+      type="submit"
+      [disabled]="updateForm.invalid || (loadingService.isLoading$ | async)"
+    >
+      <span class="btn-loading" *ngIf="loadingService.isLoading$ | async"></span>
+      {{ (loadingService.isLoading$ | async) ? 'Guardando...' : 'Guardar Cambios' }}
     </button>
 
   </form>
+
+  <!-- Toggle cambio de contraseña -->
+  <div class="password-section">
+    <button type="button" class="btn-password" (click)="togglePasswordForm()">
+      {{ showPasswordForm ? 'Cancelar' : 'Cambiar Contraseña' }}
+    </button>
+  </div>
+
+  <!-- Formulario de cambio de contraseña -->
+  <div *ngIf="showPasswordForm" class="password-form">
+    <h3>Cambiar Contraseña</h3>
+
+    <form #passwordForm="ngForm" (ngSubmit)="onChangePassword(passwordForm)">
+
+      <!-- Contraseña actual -->
+      <div class="form-group">
+        <label>Contraseña Actual</label>
+        <input
+          type="password"
+          name="currentPassword"
+          [(ngModel)]="currentPassword"
+          #currentCtrl="ngModel"
+          required
+        />
+        <small *ngIf="currentCtrl.invalid && (currentCtrl.touched || passwordForm.submitted)">
+          <span *ngIf="currentCtrl.hasError('required')">La contraseña actual es obligatoria.</span>
+        </small>
+        <small class="field-error" *ngIf="fieldErrors['currentPassword']">
+          {{ fieldErrors['currentPassword'] }}
+        </small>
+      </div>
+
+      <!-- Nueva contraseña -->
+      <div class="form-group">
+        <label>Nueva Contraseña</label>
+        <input
+          type="password"
+          name="newPassword"
+          [(ngModel)]="newPassword"
+          #newCtrl="ngModel"
+          required
+          minlength="6"
+          maxlength="100"
+          pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).+$"
+        />
+        <small *ngIf="newCtrl.invalid && (newCtrl.touched || passwordForm.submitted)">
+          <span *ngIf="newCtrl.hasError('required')">La nueva contraseña es obligatoria.</span>
+          <span *ngIf="newCtrl.hasError('minlength')">Mínimo 6 caracteres.</span>
+          <span *ngIf="newCtrl.hasError('maxlength')">Máximo 100 caracteres.</span>
+          <span *ngIf="newCtrl.hasError('pattern')">
+            Debe tener al menos una mayúscula, un número y un símbolo.
+          </span>
+        </small>
+        <small class="field-error" *ngIf="fieldErrors['newPassword']">
+          {{ fieldErrors['newPassword'] }}
+        </small>
+      </div>
+
+      <!-- Confirmar nueva contraseña -->
+      <div class="form-group">
+        <label>Confirmar Nueva Contraseña</label>
+        <input
+          type="password"
+          name="confirmNewPassword"
+          [(ngModel)]="confirmNewPassword"
+          #confirmCtrl="ngModel"
+          required
+        />
+        <small
+          class="field-error"
+          *ngIf="(confirmCtrl.touched || passwordForm.submitted) && newPassword !== confirmNewPassword"
+        >
+          Las contraseñas no coinciden.
+        </small>
+      </div>
+
+      <!-- Error general del servidor (solo visible en el form de contraseña) -->
+      <div class="message server-error" *ngIf="serverError && showPasswordForm">
+        {{ serverError }}
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="passwordForm.invalid
+                    || newPassword !== confirmNewPassword
+                    || (loadingService.isLoading$ | async)"
+      >
+        <span class="btn-loading" *ngIf="loadingService.isLoading$ | async"></span>
+        {{ (loadingService.isLoading$ | async) ? 'Actualizando...' : 'Actualizar Contraseña' }}
+      </button>
+
+    </form>
+  </div>
 </div>

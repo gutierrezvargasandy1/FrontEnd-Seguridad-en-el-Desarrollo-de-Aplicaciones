@@ -6,18 +6,8 @@
     <!-- NOMBRE -->
     <div class="form-group">
       <label>Nombre</label>
-      <input
-        type="text"
-        name="name"
-        [(ngModel)]="userData.name"
-        #nameCtrl="ngModel"
-        required
-        minlength="3"
-        maxlength="50"
-        pattern="[a-zA-ZáéíóúñÑ\s]+"
-        placeholder="Nombre"
-        (blur)="trimField('name')"
-      />
+      <input type="text" name="name" [(ngModel)]="userData.name" #nameCtrl="ngModel" required minlength="3"
+        maxlength="50" pattern="[a-zA-ZáéíóúñÑ\s]+" placeholder="Nombre" (blur)="trimField('name')" />
       <div class="error" *ngIf="nameCtrl.invalid && (nameCtrl.touched || userForm.submitted)">
         <small *ngIf="nameCtrl.hasError('required')">El nombre es obligatorio.</small>
         <small *ngIf="nameCtrl.hasError('minlength')">Mínimo 3 caracteres.</small>
@@ -30,18 +20,8 @@
     <!-- APELLIDO -->
     <div class="form-group">
       <label>Apellido</label>
-      <input
-        type="text"
-        name="lastname"
-        [(ngModel)]="userData.lastname"
-        #lastnameCtrl="ngModel"
-        required
-        minlength="3"
-        maxlength="50"
-        pattern="[a-zA-ZáéíóúñÑ\s]+"
-        placeholder="Apellido"
-        (blur)="trimField('lastname')"
-      />
+      <input type="text" name="lastname" [(ngModel)]="userData.lastname" #lastnameCtrl="ngModel" required minlength="3"
+        maxlength="50" pattern="[a-zA-ZáéíóúñÑ\s]+" placeholder="Apellido" (blur)="trimField('lastname')" />
       <div class="error" *ngIf="lastnameCtrl.invalid && (lastnameCtrl.touched || userForm.submitted)">
         <small *ngIf="lastnameCtrl.hasError('required')">El apellido es obligatorio.</small>
         <small *ngIf="lastnameCtrl.hasError('minlength')">Mínimo 3 caracteres.</small>
@@ -54,18 +34,8 @@
     <!-- USERNAME -->
     <div class="form-group">
       <label>Correo electrónico</label>
-      <input
-        type="email"
-        name="username"
-        [(ngModel)]="userData.username"
-        #usernameCtrl="ngModel"
-        required
-        email
-        minlength="5"
-        maxlength="100"
-        placeholder="usuario@dominio.com"
-        (blur)="trimField('username')"
-      />
+      <input type="email" name="username" [(ngModel)]="userData.username" #usernameCtrl="ngModel" required email
+        minlength="5" maxlength="100" placeholder="usuario@dominio.com" (blur)="trimField('username')" />
       <div class="error" *ngIf="usernameCtrl.invalid && (usernameCtrl.touched || userForm.submitted)">
         <small *ngIf="usernameCtrl.hasError('required')">El correo es obligatorio.</small>
         <small *ngIf="usernameCtrl.hasError('email')">Ingrese un correo válido (ej: usuario@dominio.com).</small>
@@ -78,17 +48,8 @@
     <!-- PASSWORD -->
     <div class="form-group">
       <label>Contraseña</label>
-      <input
-        type="password"
-        name="password"
-        [(ngModel)]="userData.password"
-        #passwordCtrl="ngModel"
-        required
-        minlength="6"
-        maxlength="100"
-        pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).+$"
-        placeholder="••••••••"
-      />
+      <input type="password" name="password" [(ngModel)]="userData.password" #passwordCtrl="ngModel" required
+        minlength="6" maxlength="100" pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).+$" placeholder="••••••••" />
       <div class="error" *ngIf="passwordCtrl.invalid && (passwordCtrl.touched || userForm.submitted)">
         <small *ngIf="passwordCtrl.hasError('required')">La contraseña es obligatoria.</small>
         <small *ngIf="passwordCtrl.hasError('minlength')">Mínimo 6 caracteres.</small>
@@ -98,6 +59,22 @@
         </small>
       </div>
       <small class="field-error" *ngIf="fieldErrors['password']">{{ fieldErrors['password'] }}</small>
+    </div>
+
+    <!-- CONFIRMAR PASSWORD -->
+    <div class="form-group">
+      <label>Confirmar contraseña</label>
+      <input type="password" name="confirmPassword" [(ngModel)]="confirmPassword" #confirmPasswordCtrl="ngModel"
+        required placeholder="••••••••" />
+
+      <div class="error" *ngIf="(confirmPasswordCtrl.touched || userForm.submitted)">
+        <small *ngIf="confirmPasswordCtrl.hasError('required')">
+          Debe confirmar la contraseña.
+        </small>
+        <small *ngIf="!confirmPasswordCtrl.hasError('required') && userData.password !== confirmPassword">
+          Las contraseñas no coinciden.
+        </small>
+      </div>
     </div>
 
     <!-- Botones -->

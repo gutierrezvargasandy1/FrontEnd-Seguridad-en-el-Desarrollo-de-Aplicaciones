@@ -1,0 +1,67 @@
+:host { display: block; width: 60%; }
+
+.create-user-container {
+  max-width: 560px;
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  padding: 32px 36px;
+}
+
+.create-user-container h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #555555;
+}
+
+.form-group input {
+  padding: 10px 14px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  font-family: inherit;
+  background-color: #fafafa;
+  color: #1a1a1a;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.btn-cancelar {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #f4f4f4;
+  color: #555555;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.msg-error {
+  font-size: 13px;
+  color: #a32d2d;
+  background-color: #fcebeb;
+  border: 1px solid #f5c1c1;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+}

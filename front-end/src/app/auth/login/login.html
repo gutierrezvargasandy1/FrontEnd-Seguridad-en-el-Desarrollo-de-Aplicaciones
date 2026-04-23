@@ -1,30 +1,34 @@
+<!-- app/auth/login/login.html -->
 <div class="login-container">
+
+
   <h2>Iniciar Sesión</h2>
 
   <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)">
-    <!-- Usuario: ahora es email -->
+    <!-- Usuario -->
     <div>
-      <label>Correo electrónico</label>
+      <label>Usuario</label>
       <input
-        type="email"
+        type="text"
         name="username"
         [(ngModel)]="username"
         #userCtrl="ngModel"
+        [class.ng-invalid]="userCtrl.invalid && userCtrl.touched"
         required
-        email
         minlength="3"
         maxlength="50"
       />
       <small class="error" *ngIf="userCtrl.invalid && (userCtrl.touched || loginForm.submitted)">
-        <span *ngIf="userCtrl.hasError('required')">El correo es obligatorio.</span>
-        <span *ngIf="userCtrl.hasError('email')">Ingrese un correo válido (ej: usuario@dominio.com).</span>
+        <span *ngIf="userCtrl.hasError('required')">El usuario es obligatorio.</span>
         <span *ngIf="userCtrl.hasError('minlength')">Mínimo 3 caracteres.</span>
         <span *ngIf="userCtrl.hasError('maxlength')">Máximo 50 caracteres.</span>
       </small>
-      <small class="field-error" *ngIf="fieldErrors['username']">{{ fieldErrors['username'] }}</small>
+      <small class="field-error" *ngIf="fieldErrors['username']">
+        {{ fieldErrors['username'] }}
+      </small>
     </div>
 
-    <!-- Contraseña: mínimo 6, máximo 100, con mayúscula, número y símbolo -->
+    <!-- Contraseña -->
     <div>
       <label>Contraseña</label>
       <input
@@ -32,27 +36,29 @@
         name="password"
         [(ngModel)]="password"
         #passCtrl="ngModel"
+        [class.ng-invalid]="passCtrl.invalid && passCtrl.touched"
         required
         minlength="6"
         maxlength="100"
-        pattern="^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).+$"
       />
       <small class="error" *ngIf="passCtrl.invalid && (passCtrl.touched || loginForm.submitted)">
         <span *ngIf="passCtrl.hasError('required')">La contraseña es obligatoria.</span>
         <span *ngIf="passCtrl.hasError('minlength')">Mínimo 6 caracteres.</span>
         <span *ngIf="passCtrl.hasError('maxlength')">Máximo 100 caracteres.</span>
-        <span *ngIf="passCtrl.hasError('pattern')">
-          Debe tener al menos una mayúscula, un número y un símbolo (!@#$%^&*).
-        </span>
       </small>
-      <small class="field-error" *ngIf="fieldErrors['password']">{{ fieldErrors['password'] }}</small>
+      <small class="field-error" *ngIf="fieldErrors['password']">
+        {{ fieldErrors['password'] }}
+      </small>
     </div>
 
-    <!-- Error global -->
-    <div class="server-error" *ngIf="serverError">{{ serverError }}</div>
+    <!-- Error global del servidor -->
+    <div class="server-error" *ngIf="serverError">
+      {{ serverError }}
+    </div>
 
-    <button type="submit" [disabled]="loginForm.invalid || loading">
-      {{ loading ? 'Entrando...' : 'Entrar' }}
+    <button type="submit" [disabled]="loginForm.invalid || (loadingService.isLoading$ | async)">
+      <span class="btn-loading" *ngIf="loadingService.isLoading$ | async"></span>
+      {{ (loadingService.isLoading$ | async) ? 'Entrando...' : 'Entrar' }}
     </button>
 
     <button type="button" [routerLink]="'/register'">Regístrate</button>

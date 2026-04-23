@@ -1,3 +1,4 @@
+<!-- app/auth/register/register.html -->
 <div class="register-container">
   <h2>Registro de Usuario</h2>
 
@@ -49,7 +50,7 @@
       <small class="field-error" *ngIf="fieldErrors['lastname']">{{ fieldErrors['lastname'] }}</small>
     </div>
 
-    <!-- Usuario -->
+    <!-- Usuario / Email -->
     <div class="form-group">
       <label>Correo electrónico</label>
       <input
@@ -106,16 +107,28 @@
         #confirmCtrl="ngModel"
         required
       />
-      <small *ngIf="(confirmCtrl.touched || registerForm.submitted) && password !== confirmPassword">
+      <small
+        class="field-error"
+        *ngIf="(confirmCtrl.touched || registerForm.submitted) && password !== confirmPassword"
+      >
         Las contraseñas no coinciden.
       </small>
     </div>
 
-    <div *ngIf="serverError" class="message server-error">{{ serverError }}</div>
-    <div *ngIf="successMessage" class="message success-msg">{{ successMessage }}</div>
+    <!-- Error general del servidor -->
+    <div class="message server-error" *ngIf="serverError">
+      {{ serverError }}
+    </div>
 
-    <button type="submit" [disabled]="loading || registerForm.invalid || (password !== confirmPassword)">
-      {{ loading ? 'Registrando...' : 'Registrar' }}
+    <!-- Botón — usa loadingService igual que en Login -->
+    <button
+      type="submit"
+      [disabled]="registerForm.invalid
+                  || password !== confirmPassword
+                  || (loadingService.isLoading$ | async)"
+    >
+      <span class="btn-loading" *ngIf="loadingService.isLoading$ | async"></span>
+      {{ (loadingService.isLoading$ | async) ? 'Registrando...' : 'Registrar' }}
     </button>
 
   </form>

@@ -1,0 +1,50 @@
+<div class="container">
+
+  <h2>Auditoría del sistema</h2>
+
+  <!-- Filtros -->
+  <div class="filters">
+    <input type="text"
+           placeholder="Buscar por usuario..."
+           [(ngModel)]="searchUser"
+           (input)="filter()" />
+
+    <label>Desde:</label>
+    <input type="date"
+           [(ngModel)]="fromDate"
+           (change)="filter()" />
+
+    <label>Hasta:</label>
+    <input type="date"
+           [(ngModel)]="toDate"
+           (change)="filter()" />
+  </div>
+
+  <!-- Tabla -->
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Usuario</th>
+        <th>Acción</th>
+        <th>Entidad</th>
+        <th>Entidad ID</th>
+        <th>IP</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let log of filteredLogs">
+        <td>{{ log.id }}</td>
+        <td>{{ log.username || log.userId }}</td>
+        <td>{{ log.action }}</td>
+        <td>{{ log.entity }}</td>
+        <td>{{ log.entityId || '-' }}</td>
+        <td>{{ log.ip || '-' }}</td>
+        <td>{{ log.createdAt | date:'medium' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

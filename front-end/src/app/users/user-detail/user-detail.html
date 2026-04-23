@@ -1,0 +1,39 @@
+<div class="create-user-container" *ngIf="!loading && user">
+
+  <h2>Detalle del Usuario</h2>
+
+  <div class="form-group">
+    <label>Nombre</label>
+    <input type="text" [value]="user.name" disabled />
+  </div>
+
+  <div class="form-group">
+    <label>Apellido</label>
+    <input type="text" [value]="user.lastname" disabled />
+  </div>
+
+  <div class="form-group">
+    <label>Correo electrónico</label>
+    <input type="text" [value]="user.username" disabled />
+  </div>
+
+  <div class="form-group">
+    <label>Fecha de creación</label>
+    <input type="text" [value]="user.created_at | date:'medium'" disabled />
+  </div>
+
+  <div class="form-actions">
+    <button type="button" (click)="goBack()" class="btn-cancelar">
+      Volver
+    </button>
+  </div>
+
+</div>
+
+<div *ngIf="loading" class="msg-error">
+  Cargando usuario...
+</div>
+
+<div *ngIf="serverError" class="msg-error">
+  {{ serverError }}
+</div>

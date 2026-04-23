@@ -10,12 +10,15 @@ import { UserService, CreateUserDto, UserError } from '../../services/user';
   styleUrls: ['./create-user.css']
 })
 export class CreateUser {
+
   userData: CreateUserDto = {
     name: '',
     lastname: '',
     username: '',
     password: ''
   };
+
+  confirmPassword: string = '';
 
   loading = false;
   serverError = '';
@@ -27,12 +30,20 @@ export class CreateUser {
   ) {}
 
   createUser(form: NgForm): void {
-    this.userData.name = this.userData.name?.trim();          // ← primero
-    this.userData.lastname = this.userData.lastname?.trim();  // ← primero
-    this.userData.username = this.userData.username?.trim();  // ← primero
+
+    // Trim primero
+    this.userData.name = this.userData.name?.trim();
+    this.userData.lastname = this.userData.lastname?.trim();
+    this.userData.username = this.userData.username?.trim();
 
     this.serverError = '';
     this.fieldErrors = {};
+
+    // ❗ Validación extra antes del form.invalid
+    if (this.userData.password !== this.confirmPassword) {
+      form.control.markAllAsTouched();
+      return;
+    }
 
     if (form.invalid) {
       form.control.markAllAsTouched();
@@ -45,6 +56,7 @@ export class CreateUser {
       next: () => {
         this.loading = false;
         form.resetForm();
+        this.confirmPassword = '';
         this.router.navigate(['/dashboard/users']);
       },
       error: (err: UserError) => {

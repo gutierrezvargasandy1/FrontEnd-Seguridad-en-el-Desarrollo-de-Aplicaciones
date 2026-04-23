@@ -9,6 +9,7 @@ import { UserService, User, UserError } from '../../services/user';
   styleUrls: ['./lista.css']
 })
 export class ListaUser implements OnInit {
+
   users: User[] = [];
   loading = false;
   serverError = '';
@@ -38,4 +39,21 @@ export class ListaUser implements OnInit {
     });
   }
 
+  deleteUser(id: number): void {
+    const confirmDelete = confirm('¿Seguro que deseas eliminar este usuario?');
+    if (!confirmDelete) return;
+
+    this.loading = true;
+
+    // 🔥 cuando agregues deleteUser al service solo cambia esta línea
+    this.userService.deleteUser(id).subscribe({
+      next: () => {
+        this.getUsers(); // refresca lista
+      },
+      error: (err: UserError) => {
+        this.serverError = err.userMessage;
+        this.loading = false;
+      }
+    });
+  }
 }

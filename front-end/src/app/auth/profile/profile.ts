@@ -1,7 +1,10 @@
+// app/dashboard/profile/profile.ts
 import { Component, OnInit } from '@angular/core';
-import { AuthService, User, LoginError } from '../../services/auth';
-import { TaskService } from '../../services/task';
 import { Router } from '@angular/router';
+import { Auth } from '../../services/auth.service/auth';  // ← Tu ruta exacta
+import { LoadingService } from '../../core/interceptors/loading.service';
+import { NotificationService } from '../../services/notification.service';
+import { TaskService } from '../../services/task';
 
 @Component({
   selector: 'app-profile',
@@ -10,64 +13,66 @@ import { Router } from '@angular/router';
   styleUrls: ['./profile.css']
 })
 export class Profile implements OnInit {
-  user: User | null = null;
+  user: any | null = null;
   loading = true;
   serverError = '';
   fieldErrors: { [key: string]: string } = {}; 
   tasks: any[] = [];
 
-  constructor(private authService: AuthService, private router: Router, private taskService: TaskService) {}
+  constructor(
+    private authService: Auth,  // ← Nuevo servicio
+    private router: Router,
+    private taskService: TaskService,
+    public loadingService: LoadingService,  // ← Loading service
+    private notification: NotificationService  // ← Notificaciones
+  ) {}
 
   ngOnInit(): void {
     this.loadProfile();
   }
 
   deleteUser(): void {
-  if (!confirm('Estas Seguro de eliminar tu perfil? Esta acción no se puede deshacer')) {
-    return;
-  }
-
-  this.loading = true;
-  this.serverError = '';
-
-  this.taskService.getTasks().subscribe({
-    next: (tasks) => {
-
-      if (tasks.length > 0) {
-        this.loading = false;
-        this.serverError = 'No puedes eliminar el perfil mientras existan tareas asociadas.';
-        this.router.navigate(['dashboard/tasks']);
-        alert(this.serverError);
-
-        return;
-      }
-
-      this.authService.deleteUser().subscribe({
-        next: () => {
-          this.user = null;
-          this.loading = false;
-          alert('Perfil eliminado exitosamente');
-          this.router.navigate(['/login']);
-        },
-        error: (error: LoginError) => {
-          this.serverError = error.userMessage || 'Error al eliminar el perfil.';
-          this.loading = false;
-        }
-      });
-
-    },
-    error: () => {
-      this.serverError = 'Error al verificar las tareas del usuario.';
-      this.loading = false;
+    if (!confirm('¿Estás seguro de eliminar tu perfil? Esta acción no se puede deshacer')) {
+      return;
     }
-  });
-}
 
-  loadProfile(): void {
-    this.loading = true;
     this.serverError = '';
 
-    this.authService.me().subscribe({
+    this.taskService.getTasks().subscribe({
+      next: (tasks) => {
+        if (tasks.length > 0) {
+          this.loading = false;
+          this.serverError = 'No puedes eliminar el perfil mientras existan tareas asociadas.';
+          this.notification.showError(this.serverError);
+          this.router.navigate(['dashboard/tasks']);
+          return;
+        }
+
+        this.authService.deleteAccount().subscribe({
+          next: () => {
+            this.user = null;
+            this.notification.showSuccess('Perfil eliminado exitosamente');
+            this.router.navigate(['/login']);
+          },
+          error: (error) => {
+            // El ErrorInterceptor ya maneja la notificación
+            this.serverError = error.userMessage || error.error?.message || 'Error al eliminar el perfil.';
+            this.loading = false;
+          }
+        });
+      },
+      error: (error) => {
+        this.serverError = 'Error al verificar las tareas del usuario.';
+        this.notification.showError(this.serverError);
+        this.loading = false;
+      }
+    });
+  }
+
+  loadProfile(): void {
+    this.serverError = '';
+
+    this.authService.getCurrentUser().subscribe({
       next: (user) => {
         if (!user || !user.username) {
           this.serverError = 'Datos del perfil incompletos.';
@@ -77,8 +82,9 @@ export class Profile implements OnInit {
         this.user = user;
         this.loading = false;
       },
-      error: (err: LoginError) => {
-        this.serverError = err.userMessage;
+      error: (error) => {
+        // El ErrorInterceptor ya maneja la notificación
+        this.serverError = error.userMessage || error.error?.message || 'Error al cargar el perfil.';
         this.loading = false;
       }
     });

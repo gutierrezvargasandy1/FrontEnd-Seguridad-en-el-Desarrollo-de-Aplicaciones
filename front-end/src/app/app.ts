@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { AuthService } from './services/auth';
+import { Auth } from './services/auth.service/auth';
 
 @Component({
   selector: 'app-root',
@@ -10,14 +10,11 @@ import { AuthService } from './services/auth';
 export class App {
   protected readonly title = signal('front-end');
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: Auth) {}
 
   ngOnInit(): void {
 
-    this.authService.refresh().subscribe({
-      next: () => console.log('Sesión restaurada'),
-      error: () => console.log('No hay sesión activa')
-    });
+
 
   }
 }

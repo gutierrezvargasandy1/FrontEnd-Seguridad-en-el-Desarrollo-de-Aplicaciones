@@ -1,15 +1,24 @@
-import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
+// app/app-module.ts
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { AuthInterceptor } from './interceptors/auth-interceptor';
-import { ErrorInterceptor } from './interceptors/error-interceptor';  // ← Importa el nuevo interceptor
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TasksModule } from './tasks/tasks-module';
 import { AuthModule } from './auth/auth-module';
 import { UsersModule } from './users/users-module';
+
+// Servicios
+import { NotificationService } from './services/notification.service';
+import { ApiService } from './core/api/services/api-service';
+import { LoadingService } from './core/interceptors/loading.service';
+import { LoadingInterceptor } from './core/interceptors/loading.interseptor';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { ErrorInterceptor } from './core/interceptors/error.interseptor';
+import { AuditLogService } from './services/audit-log.service';
+import { AuditModule } from './auditLog/auditLog-module';
 
 @NgModule({
   declarations: [
@@ -23,17 +32,29 @@ import { UsersModule } from './users/users-module';
     FormsModule,
     TasksModule,
     AuthModule,
-    UsersModule
+    UsersModule,
+    AuditModule
   ],
   providers: [
-    provideBrowserGlobalErrorListeners(),
-    // AuthInterceptor: Mete el JWT en cada peticion
+    // ============ SERVICIOS GLOBALES ============
+    LoadingService,
+    NotificationService,
+    ApiService,
+    
+    // ============ INTERCEPTORES (orden importante) ============
+    // 1. AuthInterceptor: Mete el JWT en cada petición
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
     },
-    // ErrorInterceptor: normalizacion de los errores HTTP
+    // 2. LoadingInterceptor: Maneja el estado de carga
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoadingInterceptor,
+      multi: true
+    },
+    // 3. ErrorInterceptor: Normalización de errores HTTP
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,
