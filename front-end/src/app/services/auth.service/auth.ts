@@ -43,9 +43,7 @@ export class Auth {
           this.setAccessToken(response.access_token);
         }
       }),
-      // ✅ SKIP_LOADING: el spinner ya está activo por el POST /login.
-      // Sin esto, GET /me suma un segundo contador y el spinner
-      // parpadea o se muestra doble.
+
       switchMap(() => this.getCurrentUser({ skipLoading: true }))
     );
   }
@@ -55,9 +53,7 @@ export class Auth {
       `${this.AUTH_PATH}/register`,
       userData
     ).pipe(
-      // register no devuelve token → hacemos login internamente.
-      // login ya lleva SKIP_LOADING en su GET /me, pero el POST /login
-      // que dispara aquí SÍ debe mostrarse (es la segunda petición visible).
+
       switchMap(() => this.login({
         username: userData.username,
         password: userData.password

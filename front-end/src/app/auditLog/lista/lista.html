@@ -2,30 +2,60 @@
 
   <h2>Auditoría del sistema</h2>
 
-  <!-- Filtros -->
-  <div class="filters">
-    <input type="text"
-           placeholder="Buscar por usuario..."
-           [(ngModel)]="searchUser"
-           (input)="filter()" />
+  <!-- ================= LOADING ================= -->
 
-    <label>Desde:</label>
-    <input type="date"
-           [(ngModel)]="fromDate"
-           (change)="filter()" />
-
-    <label>Hasta:</label>
-    <input type="date"
-           [(ngModel)]="toDate"
-           (change)="filter()" />
+  <div *ngIf="loading" class="loading">
+    Cargando logs...
   </div>
 
-  <!-- Tabla -->
-  <table>
+  <!-- ================= ERROR ================= -->
+
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </div>
+
+  <!-- ================= FILTROS ================= -->
+
+  <div class="filters">
+
+    <input
+      type="text"
+      placeholder="Buscar por usuario..."
+      [(ngModel)]="searchUser"
+      (input)="filter()"
+    />
+
+    <label>Desde:</label>
+
+    <input
+      type="date"
+      [(ngModel)]="fromDate"
+      (change)="filter()"
+    />
+
+    <label>Hasta:</label>
+
+    <input
+      type="date"
+      [(ngModel)]="toDate"
+      (change)="filter()"
+    />
+
+    <button type="button" (click)="clearFilters()">
+      Limpiar filtros
+    </button>
+
+  </div>
+
+  <!-- ================= TABLA ================= -->
+
+  <table *ngIf="!loading">
+
     <thead>
       <tr>
         <th>ID</th>
         <th>Usuario</th>
+        <th>Rol</th>
         <th>Acción</th>
         <th>Entidad</th>
         <th>Entidad ID</th>
@@ -35,16 +65,51 @@
     </thead>
 
     <tbody>
-      <tr *ngFor="let log of filteredLogs">
-        <td>{{ log.id }}</td>
-        <td>{{ log.username || log.userId }}</td>
-        <td>{{ log.action }}</td>
-        <td>{{ log.entity }}</td>
-        <td>{{ log.entityId || '-' }}</td>
-        <td>{{ log.ip || '-' }}</td>
-        <td>{{ log.createdAt | date:'medium' }}</td>
+
+      <tr *ngIf="filteredLogs.length === 0">
+        <td colspan="8">
+          No se encontraron logs
+        </td>
       </tr>
+
+      <tr *ngFor="let log of filteredLogs">
+
+        <td>
+          {{ log.id }}
+        </td>
+
+        <td>
+          {{ log.user?.username || 'Sin usuario' }}
+        </td>
+
+        <td>
+          {{ log.user?.role || '-' }}
+        </td>
+
+        <td>
+          {{ log.action }}
+        </td>
+
+        <td>
+          {{ log.entity }}
+        </td>
+
+        <td>
+          {{ log.entityId || '-' }}
+        </td>
+
+        <td>
+          {{ log.ip || '-' }}
+        </td>
+
+        <td>
+          {{ log.createdAt | date:'medium' }}
+        </td>
+
+      </tr>
+
     </tbody>
+
   </table>
 
 </div>

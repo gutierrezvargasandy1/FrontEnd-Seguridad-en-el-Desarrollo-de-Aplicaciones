@@ -1,73 +1,165 @@
 // app/app-routing-module.ts
+
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { Login } from './auth/login/login';
+import { Register } from './auth/register/register';
+import { Profile } from './auth/profile/profile';
+import { UpdateUser } from './auth/update-user/update-user';
+
 import { Layout } from './dashboard/layout/layout';
+
 import { List } from './tasks/list/list';
 import { AgregarTarea } from './tasks/agregar-tarea/agregar-tarea';
 import { TareaDetails } from './tasks/tarea-details/tarea-details';
-import { Profile } from './auth/profile/profile';
-import { Register } from './auth/register/register';
 import { UpdateTask } from './tasks/update-task/update-task';
-import { CreateUser } from './users/create-user/create-user';
+
 import { ListaUser } from './users/lista/lista';
-import { UpdateUser } from './auth/update-user/update-user';
-import { AuthGuard } from './guards/auth.guard';
-import { RoleGuard } from './guards/role.guard';
+import { CreateUser } from './users/create-user/create-user';
 import { UserDetail } from './users/user-detail/user-detail';
 import { UserUpdate } from './users/user-update/user-update';
+
 import { Lista } from './auditLog/lista/lista';
 
+import { AuthGuard } from './guards/auth.guard';
+
 const routes: Routes = [
-  { path: 'login', component: Login },
-  { path: 'register', component: Register },
+
+  // ================= AUTH =================
+  {
+    path: 'login',
+    component: Login
+  },
+  {
+    path: 'register',
+    component: Register
+  },
+
+  // ================= DASHBOARD =================
   {
     path: 'dashboard',
     component: Layout,
-    canActivate: [AuthGuard], // Protección: solo usuarios autenticados
+    canActivate: [AuthGuard],
+
     children: [
-      // ============ RUTAS PARA AMBOS ROLES (CLIENT y ADMIN) ============
-      { path: 'tasks', component: List },
-      { path: 'tasks/nueva', component: AgregarTarea },
-      { path: 'tasks/:id', component: TareaDetails },
-      { path: 'tasks/edit/:id', component: UpdateTask },
-      { path: 'profile', component: Profile },
-      { path: 'profile/update', component: UpdateUser },
+
+      // =====================================================
+      // RUTAS PARA CLIENT Y ADMIN
+      // =====================================================
+
+      {
+        path: 'tasks',
+        component: List,
+        data: {
+          roles: ['CLIENT', 'ADMIN']
+        }
+      },
+
+      {
+        path: 'tasks/nueva',
+        component: AgregarTarea,
+        data: {
+          roles: ['CLIENT', 'ADMIN']
+        }
+      },
+
+      {
+        path: 'tasks/:id',
+        component: TareaDetails,
+        data: {
+          roles: ['CLIENT', 'ADMIN']
+        }
+      },
+
+      {
+        path: 'tasks/edit/:id',
+        component: UpdateTask,
+        data: {
+          roles: ['CLIENT', 'ADMIN']
+        }
+      },
+
+      {
+        path: 'profile',
+        component: Profile,
+        data: {
+          roles: ['CLIENT', 'ADMIN']
+        }
+      },
+
+      {
+        path: 'profile/update',
+        component: UpdateUser,
+        data: {
+          roles: ['CLIENT', 'ADMIN']
+        }
+      },
+
       {
         path: 'audit-log',
         component: Lista,
-        canActivate: [RoleGuard],
-        data: { roles: ['ADMIN', 'CLIENT'] }
+        data: {
+          roles: ['CLIENT', 'ADMIN']
+        }
       },
-      // ============ RUTAS SOLO PARA ADMIN ============
+
+      // =====================================================
+      // RUTAS SOLO ADMIN
+      // =====================================================
+
       {
         path: 'users',
         component: ListaUser,
-        canActivate: [RoleGuard],
-        data: { roles: ['ADMIN'] }
+        data: {
+          roles: ['ADMIN']
+        }
       },
+
       {
         path: 'users/create',
         component: CreateUser,
-        canActivate: [RoleGuard],
-        data: { roles: ['ADMIN'] }
+        data: {
+          roles: ['ADMIN']
+        }
       },
+
       {
         path: 'users/:id',
         component: UserDetail,
-        canActivate: [RoleGuard],
-        data: { roles: ['ADMIN'] }
+        data: {
+          roles: ['ADMIN']
+        }
       },
+
       {
         path: 'users/update/:id',
         component: UserUpdate,
-        canActivate: [RoleGuard],
-        data: { roles: ['ADMIN'] }
+        data: {
+          roles: ['ADMIN']
+        }
+      },
+
+      // ================= REDIRECCIÓN INTERNA =================
+      {
+        path: '',
+        redirectTo: 'tasks',
+        pathMatch: 'full'
       }
     ]
   },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: '**', redirectTo: 'login' } // Ruta comodín para páginas no encontradas
+
+  // ================= REDIRECCIONES GLOBALES =================
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
+  },
+
+  {
+    path: '**',
+    redirectTo: 'login'
+  }
 ];
 
 @NgModule({
