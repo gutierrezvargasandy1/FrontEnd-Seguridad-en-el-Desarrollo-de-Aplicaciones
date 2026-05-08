@@ -1,9 +1,13 @@
+// lista.ts
+
 import { Component, OnInit } from '@angular/core';
 
 import {
   AuditLog,
   AuditLogService
 } from '../../services/audit-log.service';
+
+import { Auth } from '../../services/auth.service/auth';
 
 @Component({
   selector: 'app-lista',
@@ -17,6 +21,10 @@ export class Lista implements OnInit {
 
   filteredLogs: AuditLog[] = [];
 
+  searchAction = '';
+
+  searchEntity = '';
+
   searchUser = '';
 
   fromDate = '';
@@ -28,7 +36,8 @@ export class Lista implements OnInit {
   errorMessage = '';
 
   constructor(
-    private auditService: AuditLogService
+    private auditService: AuditLogService,
+    private authService: Auth
   ) {}
 
   ngOnInit(): void {
@@ -44,11 +53,45 @@ export class Lista implements OnInit {
 
     this.errorMessage = '';
 
+    // ================= SI ES ADMIN =================
+
+    if (this.isAdmin()) {
+
+      this.auditService.getAll().subscribe({
+
+        next: (res: AuditLog[]) => {
+
+          console.log('Logs ADMIN:', res);
+
+          this.logs = res || [];
+
+          this.filteredLogs = [...this.logs];
+
+          this.loading = false;
+        },
+
+        error: (error) => {
+
+          console.error('Error al cargar logs:', error);
+
+          this.errorMessage =
+            error?.error?.message ||
+            'Error al cargar logs de auditoría';
+
+          this.loading = false;
+        }
+      });
+
+      return;
+    }
+
+    // ================= SI ES CLIENT =================
+
     this.auditService.getMine().subscribe({
 
       next: (res: AuditLog[]) => {
 
-        console.log('Logs recibidos:', res);
+        console.log('Logs USER:', res);
 
         this.logs = res || [];
 
@@ -76,7 +119,23 @@ export class Lista implements OnInit {
 
     this.filteredLogs = this.logs.filter((log: AuditLog) => {
 
-      // ================= USERNAME =================
+      // ================= ACTION =================
+
+      const action = log.action?.toLowerCase() || '';
+
+      const matchesAction =
+        this.searchAction === '' ||
+        action.includes(this.searchAction.toLowerCase());
+
+      // ================= ENTITY =================
+
+      const entity = log.entity?.toLowerCase() || '';
+
+      const matchesEntity =
+        this.searchEntity === '' ||
+        entity.includes(this.searchEntity.toLowerCase());
+
+      // ================= USER =================
 
       const username = log.user?.username?.toLowerCase() || '';
 
@@ -102,13 +161,23 @@ export class Lista implements OnInit {
 
       // ================= RESULT =================
 
-      return matchesUser && matchesFrom && matchesTo;
+      return (
+        matchesAction &&
+        matchesEntity &&
+        matchesUser &&
+        matchesFrom &&
+        matchesTo
+      );
     });
   }
 
   // ================= CLEAR FILTERS =================
 
   clearFilters(): void {
+
+    this.searchAction = '';
+
+    this.searchEntity = '';
 
     this.searchUser = '';
 
@@ -117,5 +186,39 @@ export class Lista implements OnInit {
     this.toDate = '';
 
     this.filteredLogs = [...this.logs];
+  }
+
+  // ================= FORMAT JSON =================
+
+  formatJson(data: any): string {
+
+    if (!data) {
+
+      return '-';
+    }
+
+    // ================= SI ES OBJETO =================
+
+    if (typeof data === 'object') {
+
+      return Object.values(data)
+        .filter(value =>
+          value !== null &&
+          value !== undefined &&
+          value !== ''
+        )
+        .join(' | ');
+    }
+
+    // ================= SI ES STRING O NUMBER =================
+
+    return String(data);
+  }
+
+  // ================= ROLE =================
+
+  isAdmin(): boolean {
+
+    return this.authService.isAdmin();
   }
 }

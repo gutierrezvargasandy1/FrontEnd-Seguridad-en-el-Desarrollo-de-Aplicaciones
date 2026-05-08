@@ -1,4 +1,4 @@
-// app/services/audit-log.service.ts
+// audit-log.service.ts
 
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -15,20 +15,22 @@ export interface AuditLog {
 
   entity: string;
 
-  entityId?: number | null;
+  entityId: number | null;
 
-  oldValue?: any;
+  oldValue: any | null;
 
-  newValue?: any;
-
-  ip: string | null;
+  newValue: any | null;
 
   createdAt: Date;
 
-  // Relación user que viene del include de Prisma
+  // ================= USER =================
+
   user?: {
+
     id: number;
+
     username: string;
+
     role: 'ADMIN' | 'CLIENT';
   };
 }
@@ -41,12 +43,14 @@ export class AuditLogService {
   constructor(private api: ApiService) {}
 
   // ================= ADMIN =================
+
   getAll(): Observable<AuditLog[]> {
 
     return this.api.get<AuditLog[]>('audit-log/all');
   }
 
   // ================= USER =================
+
   getMine(): Observable<AuditLog[]> {
 
     return this.api.get<AuditLog[]>('audit-log/me');

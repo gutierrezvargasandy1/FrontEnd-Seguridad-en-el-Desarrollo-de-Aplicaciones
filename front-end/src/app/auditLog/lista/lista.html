@@ -1,6 +1,15 @@
+<!-- lista.html -->
+
 <div class="container">
 
-  <h2>Auditoría del sistema</h2>
+  <h2>
+
+    {{ isAdmin()
+      ? 'Movimientos del sistema'
+      : 'Mis movimientos'
+    }}
+
+  </h2>
 
   <!-- ================= LOADING ================= -->
 
@@ -19,6 +28,23 @@
   <div class="filters">
 
     <input
+      type="text"
+      placeholder="Buscar por acción..."
+      [(ngModel)]="searchAction"
+      (input)="filter()"
+    />
+
+    <input
+      type="text"
+      placeholder="Buscar por entidad..."
+      [(ngModel)]="searchEntity"
+      (input)="filter()"
+    />
+
+    <!-- ================= SOLO ADMIN ================= -->
+
+    <input
+      *ngIf="isAdmin()"
       type="text"
       placeholder="Buscar por usuario..."
       [(ngModel)]="searchUser"
@@ -52,38 +78,45 @@
   <table *ngIf="!loading">
 
     <thead>
+
       <tr>
-        <th>ID</th>
-        <th>Usuario</th>
-        <th>Rol</th>
+
+        <!-- ================= SOLO ADMIN ================= -->
+
+        <th *ngIf="isAdmin()">
+          Usuario
+        </th>
+
         <th>Acción</th>
+
         <th>Entidad</th>
-        <th>Entidad ID</th>
-        <th>IP</th>
+
+        <th>Valor anterior</th>
+
+        <th>Valor nuevo</th>
+
         <th>Fecha</th>
+
       </tr>
+
     </thead>
 
     <tbody>
 
       <tr *ngIf="filteredLogs.length === 0">
-        <td colspan="8">
+
+        <td [attr.colspan]="isAdmin() ? 6 : 5">
           No se encontraron logs
         </td>
+
       </tr>
 
       <tr *ngFor="let log of filteredLogs">
 
-        <td>
-          {{ log.id }}
-        </td>
+        <!-- ================= SOLO ADMIN ================= -->
 
-        <td>
-          {{ log.user?.username || 'Sin usuario' }}
-        </td>
-
-        <td>
-          {{ log.user?.role || '-' }}
+        <td *ngIf="isAdmin()">
+          {{ log.user?.username || '-' }}
         </td>
 
         <td>
@@ -95,11 +128,11 @@
         </td>
 
         <td>
-          {{ log.entityId || '-' }}
+          {{ formatJson(log.oldValue) }}
         </td>
 
         <td>
-          {{ log.ip || '-' }}
+          {{ formatJson(log.newValue) }}
         </td>
 
         <td>
