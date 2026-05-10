@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { TaskService, Task, TaskError } from '../../services/task';
+import { TaskService } from '../../services/task.service/task';
+import { Task } from '../../services/task.service/interface/task.interface';
+import { ErrorResponse } from '../../services/error-response.interface';
 
 @Component({
   selector: 'app-tarea-details',
@@ -55,7 +57,7 @@ export class TareaDetails implements OnInit {
         };
         this.loading = false;
       },
-      error: (err: TaskError) => {
+      error: (err: ErrorResponse) => {
         this.serverError = err.userMessage;
         this.loading = false;
       }

@@ -8,7 +8,6 @@
   <div *ngIf="loading" class="loading-msg">Cargando usuarios...</div>
 
   <!-- Error global -->
-  <div *ngIf="serverError" class="server-error">{{ serverError }}</div>
 
   <!-- Lista de usuarios -->
   <ul class="user-list" *ngIf="!loading && users.length > 0">
@@ -22,16 +21,16 @@
 
       <div class="actions">
         <button
-          class="btn-update"
-          [routerLink]="['/dashboard/users/update', user.id]">
-          Actualizar
-        </button>
-
-        <button
-          class="btn-delete"
+          class="btn-eliminar"
           (click)="deleteUser(user.id)">
           Eliminar
         </button>
+        <button
+          class="btn-update"
+          [routerLink]="['/dashboard/users/update', user.id]">
+          Editar
+        </button>
+
       </div>
 
     </li>

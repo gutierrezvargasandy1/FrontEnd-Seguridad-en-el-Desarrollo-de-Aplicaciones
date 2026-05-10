@@ -1,50 +1,139 @@
-.register-container {
-  width: 350px;
-  margin: 40px auto;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  background: #ffffff;
+/* ================= REGISTER CONTAINER ================= */
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  min-height: 100vh;
+
+  background-color: #f4f6f8;
 }
+
+.register-container {
+  width: 100%;
+  max-width: 400px;
+
+  padding: 32px 36px;
+
+  background: #ffffff;
+  margin-right: 400px;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* ================= TITULO ================= */
 
 h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a1a1a;
+
   text-align: center;
-  margin-bottom: 20px;
+
+  margin-bottom: 28px;
 }
 
-.form-group {
-  margin-bottom: 15px;
+/* ================= FORM ================= */
+
+form {
   display: flex;
   flex-direction: column;
+
+  gap: 18px;
 }
+
+/* ================= GRUPOS ================= */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+/* ================= INPUTS ================= */
 
 input {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  width: 100%;
+
+  padding: 10px 14px;
+
+  font-size: 14px;
+  font-family: inherit;
+
+  color: #000000; /* letras negras */
+  background-color: #fafafa;
+
+  border: 1px solid #ddd;
+  border-radius: 6px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
 }
 
+/* PLACEHOLDER */
+input::placeholder {
+  color: #000000;
+  opacity: 1;
+}
+
+/* FOCUS */
+input:focus {
+  border-color: #2563eb;
+  background-color: #ffffff;
+}
+
+/* ================= ERRORES ================= */
+
 small {
-  color: red;
+  color: #a32d2d;
   font-size: 12px;
 }
 
+/* ================= BOTON ================= */
+
 button {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #2c3e50;
+  padding: 10px 18px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  background-color: #251f81;
   color: white;
+
+  border: none;
+  border-radius: 6px;
+
   cursor: pointer;
+
+  transition: background-color 0.2s;
+
+  margin-top: 6px;
+}
+
+button:hover:not(:disabled) {
+  background-color: #251f81;
 }
 
 button:disabled {
-  background-color: gray;
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
+/* ================= MENSAJE ================= */
+
 .message {
-  margin-top: 15px;
+  font-size: 13px;
   text-align: center;
-  font-weight: bold;
+
+  margin-top: 15px;
+
+  color: #1a1a1a;
 }

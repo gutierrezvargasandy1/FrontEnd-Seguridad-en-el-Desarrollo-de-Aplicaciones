@@ -1,5 +1,3 @@
-// app/core/interceptors/auth.interceptor.ts
-
 import { Injectable, Injector } from '@angular/core';
 
 import {
@@ -29,7 +27,7 @@ import {
 
 import { Auth } from '../../services/auth.service/auth';
 
-// ================= TOKEN PARA OMITIR REFRESH =================
+// ================= SKIP REFRESH =================
 
 export const SKIP_REFRESH =
   new HttpContextToken<boolean>(() => false);
@@ -37,17 +35,12 @@ export const SKIP_REFRESH =
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  // ================= CONTROL REFRESH =================
-
   private isRefreshing = false;
 
-  private refreshTokenSubject:
-    BehaviorSubject<string | null> =
-      new BehaviorSubject<string | null>(null);
+  private refreshTokenSubject =
+    new BehaviorSubject<string | null>(null);
 
   constructor(private injector: Injector) {}
-
-  // ================= INTERCEPT =================
 
   intercept(
     req: HttpRequest<any>,
@@ -56,93 +49,122 @@ export class AuthInterceptor implements HttpInterceptor {
 
     const authService = this.injector.get(Auth);
 
-    // ================= VALIDAR AUTH ENDPOINT =================
+    const isAuthEndpoint = this.isAuthEndpoint(req.url);
+    const skipRefresh = req.context.get(SKIP_REFRESH);
+    const accessToken = authService.getAccessToken();
 
-    const isAuthEndpoint =
-      this.isAuthEndpoint(req.url);
+    // ================= AUTO REFRESH =================
+    if (
+      accessToken &&
+      !isAuthEndpoint &&
+      !skipRefresh &&
+      this.shouldRefreshToken(accessToken)
+    ) {
+      return this.refreshAccessToken(req, next, authService);
+    }
 
-    const skipRefresh =
-      req.context.get(SKIP_REFRESH);
-
-    // ================= OBTENER ACCESS TOKEN =================
-
-    const accessToken =
-      authService.getAccessToken();
-
-    // ================= CLONAR REQUEST =================
-
+    // ================= ADD TOKEN =================
     let authReq = req;
 
     if (accessToken && !isAuthEndpoint) {
-
-      authReq =
-        this.addTokenToRequest(req, accessToken);
+      authReq = this.addTokenToRequest(req, accessToken);
     }
 
-    // ================= EJECUTAR REQUEST =================
-
+    // ================= REQUEST =================
     return next.handle(authReq).pipe(
 
       catchError((error: HttpErrorResponse) => {
 
-        // ================= SOLO MANEJAR 401 =================
-
-        if (
-          error.status === 401 &&
-          !isAuthEndpoint &&
-          !skipRefresh
-        ) {
-
-          return this.handle401Error(
-            authReq,
-            next,
-            authService
-          );
+        // ================= NO AUTH =================
+        if (isAuthEndpoint || skipRefresh) {
+          return throwError(() => error);
         }
 
+        // ================= 401 HANDLER =================
+        if (error.status === 401) {
+
+          const isRefreshCall =
+            req.url.includes('/auth/refresh');
+
+          if (!isRefreshCall && !this.isRefreshing) {
+            return this.handle401Error(authReq, next, authService);
+          }
+
+          return throwError(() => error);
+        }
+
+        // ================= OTROS ERRORES (409, 500, etc) =================
         return throwError(() => error);
       })
     );
   }
 
-  // ================= VALIDAR AUTH ENDPOINTS =================
+  // ================= CHECK EXPIRATION =================
+  private shouldRefreshToken(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (!payload.exp) return false;
 
-  private isAuthEndpoint(url: string): boolean {
+      const expiration = payload.exp * 1000;
+      const now = Date.now();
+      const oneMinute = 60 * 1000;
 
-    const authEndpoints = [
+      return expiration - now <= oneMinute;
+    } catch {
+      return false;
+    }
+  }
 
-      '/auth/login',
+  // ================= REFRESH =================
+  private refreshAccessToken(
+    request: HttpRequest<any>,
+    next: HttpHandler,
+    authService: Auth
+  ): Observable<HttpEvent<any>> {
 
-      '/auth/register',
+    if (this.isRefreshing) {
+      return this.refreshTokenSubject.pipe(
+        filter(token => token !== null),
+        take(1),
+        switchMap(token =>
+          next.handle(this.addTokenToRequest(request, token!))
+        )
+      );
+    }
 
-      '/auth/refresh',
+    this.isRefreshing = true;
+    this.refreshTokenSubject.next(null);
 
-      '/auth/logout'
-    ];
+    return authService.refreshToken().pipe(
 
-    return authEndpoints.some(endpoint =>
-      url.includes(endpoint)
+      switchMap((res: any) => {
+
+        const newToken = res.access_token;
+
+        authService.setAccessToken(newToken);
+        this.refreshTokenSubject.next(newToken);
+
+        return next.handle(
+          this.addTokenToRequest(request, newToken)
+        );
+      }),
+
+      catchError((err) => {
+        const router = this.injector.get(Router);
+
+        this.refreshTokenSubject.next(null);
+
+
+        return throwError(() => err);
+      }),
+
+      finalize(() => {
+        this.isRefreshing = false;
+      })
     );
   }
 
-  // ================= AGREGAR TOKEN =================
-
-  private addTokenToRequest(
-    request: HttpRequest<any>,
-    token: string
-  ): HttpRequest<any> {
-
-    return request.clone({
-
-      setHeaders: {
-
-        Authorization: `Bearer ${token}`
-      }
-    });
-  }
-
-  // ================= MANEJO 401 =================
-
+  // ================= 401 HANDLER =================
   private handle401Error(
     request: HttpRequest<any>,
     next: HttpHandler,
@@ -151,88 +173,69 @@ export class AuthInterceptor implements HttpInterceptor {
 
     const router = this.injector.get(Router);
 
-    // ================= SI NO HAY REFRESH EN CURSO =================
-
     if (!this.isRefreshing) {
 
       this.isRefreshing = true;
-
       this.refreshTokenSubject.next(null);
 
       return authService.refreshToken().pipe(
 
-        // ================= REFRESH EXITOSO =================
+        switchMap((res: any) => {
 
-        switchMap((response: { access_token: string }) => {
+          const token = res.access_token;
 
-          // Guardar nuevo access token
-          authService.setAccessToken(
-            response.access_token
-          );
+          authService.setAccessToken(token);
+          this.refreshTokenSubject.next(token);
 
-          // Despertar requests en espera
-          this.refreshTokenSubject.next(
-            response.access_token
-          );
-
-          // Reintentar request original
           return next.handle(
-
-            this.addTokenToRequest(
-              request,
-              response.access_token
-            )
+            this.addTokenToRequest(request, token)
           );
         }),
 
-        // ================= REFRESH FALLÓ =================
+        catchError((err) => {
 
-        catchError((refreshError) => {
-
-          console.error(
-            'Refresh token inválido:',
-            refreshError
-          );
-
-          // Reset refresh subject
           this.refreshTokenSubject.next(null);
 
-          // Limpiar sesión
-          authService.logout();
-
-          // Redirigir login
           router.navigate(['/login']);
 
-          return throwError(() => refreshError);
+          return throwError(() => err);
         }),
 
-        // ================= FINALIZE =================
-
         finalize(() => {
-
           this.isRefreshing = false;
         })
       );
     }
 
-    // ================= SI YA HAY REFRESH =================
-
     return this.refreshTokenSubject.pipe(
-
       filter(token => token !== null),
-
       take(1),
-
       switchMap(token =>
-
-        next.handle(
-
-          this.addTokenToRequest(
-            request,
-            token!
-          )
-        )
+        next.handle(this.addTokenToRequest(request, token!))
       )
     );
+  }
+
+  // ================= AUTH ENDPOINTS =================
+  private isAuthEndpoint(url: string): boolean {
+    return [
+      '/auth/login',
+      '/auth/register',
+      '/auth/refresh',
+      '/auth/logout'
+    ].some(e => url.includes(e));
+  }
+
+  // ================= ADD TOKEN =================
+  private addTokenToRequest(
+    request: HttpRequest<any>,
+    token: string
+  ): HttpRequest<any> {
+
+    return request.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
   }
 }

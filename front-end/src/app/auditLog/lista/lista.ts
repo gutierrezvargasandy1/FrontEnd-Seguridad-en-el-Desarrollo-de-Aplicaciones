@@ -1,19 +1,19 @@
-// lista.ts
-
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 import {
-  AuditLog,
   AuditLogService
-} from '../../services/audit-log.service';
+} from '../../services/audit-log.service/audit-log.service';
 
 import { Auth } from '../../services/auth.service/auth';
+import { AuditLog } from '../../services/audit-log.service/interface/auditLog.interface';
 
 @Component({
   selector: 'app-lista',
   templateUrl: './lista.html',
   standalone: false,
   styleUrl: './lista.css',
+  encapsulation: ViewEncapsulation.None
+
 })
 export class Lista implements OnInit {
 
@@ -61,8 +61,6 @@ export class Lista implements OnInit {
 
         next: (res: AuditLog[]) => {
 
-          console.log('Logs ADMIN:', res);
-
           this.logs = res || [];
 
           this.filteredLogs = [...this.logs];
@@ -71,8 +69,6 @@ export class Lista implements OnInit {
         },
 
         error: (error) => {
-
-          console.error('Error al cargar logs:', error);
 
           this.errorMessage =
             error?.error?.message ||
@@ -91,8 +87,6 @@ export class Lista implements OnInit {
 
       next: (res: AuditLog[]) => {
 
-        console.log('Logs USER:', res);
-
         this.logs = res || [];
 
         this.filteredLogs = [...this.logs];
@@ -101,8 +95,6 @@ export class Lista implements OnInit {
       },
 
       error: (error) => {
-
-        console.error('Error al cargar logs:', error);
 
         this.errorMessage =
           error?.error?.message ||

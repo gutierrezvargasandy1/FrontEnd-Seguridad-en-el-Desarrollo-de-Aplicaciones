@@ -3,146 +3,92 @@
 <div class="container">
 
   <h2>
-
     {{ isAdmin()
       ? 'Movimientos del sistema'
       : 'Mis movimientos'
     }}
-
   </h2>
 
-  <!-- ================= LOADING ================= -->
-
+  <!-- LOADING -->
   <div *ngIf="loading" class="loading">
     Cargando logs...
   </div>
 
-  <!-- ================= ERROR ================= -->
-
+  <!-- ERROR -->
   <div *ngIf="errorMessage" class="error">
     {{ errorMessage }}
   </div>
 
-  <!-- ================= FILTROS ================= -->
-
+  <!-- FILTROS -->
   <div class="filters">
 
-    <input
-      type="text"
-      placeholder="Buscar por acción..."
-      [(ngModel)]="searchAction"
-      (input)="filter()"
-    />
+    <input type="text" placeholder="Buscar por acción..." [(ngModel)]="searchAction" (input)="filter()" />
 
-    <input
-      type="text"
-      placeholder="Buscar por entidad..."
-      [(ngModel)]="searchEntity"
-      (input)="filter()"
-    />
+    <input type="text" placeholder="Buscar por entidad..." [(ngModel)]="searchEntity" (input)="filter()" />
 
-    <!-- ================= SOLO ADMIN ================= -->
-
-    <input
-      *ngIf="isAdmin()"
-      type="text"
-      placeholder="Buscar por usuario..."
-      [(ngModel)]="searchUser"
-      (input)="filter()"
-    />
+    <input *ngIf="isAdmin()" type="text" placeholder="Buscar por usuario..." [(ngModel)]="searchUser" (input)="filter()" />
 
     <label>Desde:</label>
-
-    <input
-      type="date"
-      [(ngModel)]="fromDate"
-      (change)="filter()"
-    />
+    <input type="date" [(ngModel)]="fromDate" (change)="filter()" />
 
     <label>Hasta:</label>
+    <input type="date" [(ngModel)]="toDate" (change)="filter()" />
 
-    <input
-      type="date"
-      [(ngModel)]="toDate"
-      (change)="filter()"
-    />
-
-    <button type="button" (click)="clearFilters()">
-      Limpiar filtros
-    </button>
+    <button type="button" (click)="clearFilters()">Limpiar filtros</button>
 
   </div>
 
-  <!-- ================= TABLA ================= -->
+  <!-- TABLA -->
+  <div class="table-wrapper">
 
-  <table *ngIf="!loading">
+    <table *ngIf="!loading">
 
-    <thead>
+      <thead>
+        <tr>
+          <th *ngIf="isAdmin()">Usuario</th>
+          <th>Acción</th>
+          <th>Entidad</th>
+          <th>Valor anterior</th>
+          <th>Valor nuevo</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
 
-      <tr>
+      <tbody>
 
-        <!-- ================= SOLO ADMIN ================= -->
+        <tr *ngIf="filteredLogs.length === 0">
+          <td [attr.colspan]="isAdmin() ? 6 : 5">
+            No se encontraron logs
+          </td>
+        </tr>
 
-        <th *ngIf="isAdmin()">
-          Usuario
-        </th>
+        <tr *ngFor="let log of filteredLogs">
 
-        <th>Acción</th>
+          <td *ngIf="isAdmin()">
+            {{ log.user?.username || '-' }}
+          </td>
 
-        <th>Entidad</th>
+          <td>{{ log.action }}</td>
 
-        <th>Valor anterior</th>
+          <td>{{ log.entity }}</td>
 
-        <th>Valor nuevo</th>
+          <!-- 🔥 IMPORTANTE: columnas JSON -->
+          <td class="col-json">
+            {{ formatJson(log.oldValue) }}
+          </td>
 
-        <th>Fecha</th>
+          <td class="col-json">
+            {{ formatJson(log.newValue) }}
+          </td>
 
-      </tr>
+          <td>{{ log.createdAt | date:'medium' }}</td>
 
-    </thead>
+        </tr>
 
-    <tbody>
+      </tbody>
 
-      <tr *ngIf="filteredLogs.length === 0">
+    </table>
 
-        <td [attr.colspan]="isAdmin() ? 6 : 5">
-          No se encontraron logs
-        </td>
-
-      </tr>
-
-      <tr *ngFor="let log of filteredLogs">
-
-        <!-- ================= SOLO ADMIN ================= -->
-
-        <td *ngIf="isAdmin()">
-          {{ log.user?.username || '-' }}
-        </td>
-
-        <td>
-          {{ log.action }}
-        </td>
-
-        <td>
-          {{ log.entity }}
-        </td>
-
-        <td>
-          {{ formatJson(log.oldValue) }}
-        </td>
-
-        <td>
-          {{ formatJson(log.newValue) }}
-        </td>
-
-        <td>
-          {{ log.createdAt | date:'medium' }}
-        </td>
-
-      </tr>
-
-    </tbody>
-
-  </table>
+  </div>
 
 </div>

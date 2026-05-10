@@ -1,17 +1,16 @@
 <div class="dashboard">
 
   <nav>
-    <!-- Tareas -->
+    <div class="nav-logo">TaskBoard</div>
+
     <button [routerLink]="['/dashboard/tasks']" class="btn-nav">
       📋 Tareas
     </button>
 
-    <!-- Usuarios (solo ADMIN) -->
     <button *ngIf="isAdmin()" [routerLink]="['/dashboard/users']" class="btn-nav">
       👥 Usuarios
     </button>
 
-    <!-- Auditoría (AMBOS ROLES, texto dinámico) -->
     <button
       *ngIf="isAdmin() || isClient()"
       [routerLink]="['/dashboard/audit-log']"
@@ -19,19 +18,19 @@
       🧾 {{ isAdmin() ? 'Movimientos' : 'Mis movimientos' }}
     </button>
 
-    <!-- Perfil -->
+    <div class="nav-spacer"></div>
+
     <button class="btn-profile" routerLink="/dashboard/profile">
       👤 Mi Perfil
     </button>
 
-    <!-- Logout -->
     <button (click)="logout()" class="btn-logout">
       🚪 Salir
     </button>
   </nav>
 
-  <hr>
-
-  <router-outlet></router-outlet>
+  <main class="dashboard-content">
+    <router-outlet></router-outlet>
+  </main>
 
 </div>

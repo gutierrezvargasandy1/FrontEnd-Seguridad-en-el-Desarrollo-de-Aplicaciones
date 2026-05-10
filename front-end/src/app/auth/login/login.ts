@@ -49,8 +49,6 @@ export class Login {
           this.fieldErrors = this.extractFieldErrors(err.fieldErrors);
         }
 
-        // Mensaje de error para mostrar bajo el formulario
-        // Usamos SIEMPRE userMessage (ya traducido por el interceptor)
         this.serverError = err.userMessage ?? 'Ocurrió un error inesperado.';
       }
     });

@@ -1,4 +1,3 @@
-// app/app-module.ts
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing-module';
@@ -17,12 +16,15 @@ import { LoadingService } from './core/interceptors/loading.service';
 import { LoadingInterceptor } from './core/interceptors/loading.interseptor';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interseptor';
-import { AuditLogService } from './services/audit-log.service';
+import { AuditLogService } from './services/audit-log.service/audit-log.service';
 import { AuditModule } from './auditLog/auditLog-module';
+import { Notification } from './utils/notification/notification';
 
 @NgModule({
   declarations: [
-    App
+    App,
+    Notification
+
   ],
   imports: [
     BrowserModule,
@@ -34,7 +36,7 @@ import { AuditModule } from './auditLog/auditLog-module';
     AuthModule,
     UsersModule,
     AuditModule
-  ],
+    ],
   providers: [
     // ============ SERVICIOS GLOBALES ============
     LoadingService,
@@ -42,19 +44,16 @@ import { AuditModule } from './auditLog/auditLog-module';
     ApiService,
     
     // ============ INTERCEPTORES (orden importante) ============
-    // 1. AuthInterceptor: Mete el JWT en cada petición
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
     },
-    // 2. LoadingInterceptor: Maneja el estado de carga
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LoadingInterceptor,
       multi: true
     },
-    // 3. ErrorInterceptor: Normalización de errores HTTP
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,

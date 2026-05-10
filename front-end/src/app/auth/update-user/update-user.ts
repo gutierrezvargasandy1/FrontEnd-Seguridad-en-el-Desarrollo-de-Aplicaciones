@@ -1,4 +1,3 @@
-// app/dashboard/profile/update-user/update-user.ts
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,12 +18,10 @@ export class UpdateUser implements OnInit {
   lastname = '';
   username = '';
 
-  // Datos para cambio de contraseña
   currentPassword = '';
   newPassword = '';
   confirmNewPassword = '';
 
-  // Estados
   serverError = '';
   fieldErrors: Record<string, string> = {};
   showPasswordForm = false;

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService, User, UserError } from '../../services/user';
+import { UserService} from '../../services/user.service/user';
+import { User } from '../../services/user.service/interface/user.interface';
+import { ErrorResponse } from '../../services/error-response.interface';
 
 @Component({
   selector: 'app-user-detail',
@@ -28,7 +30,6 @@ export class UserDetail implements OnInit {
       return;
     }
 
-    // Reutilizamos getUsers porque tu service aún no tiene getUserById
     this.userService.getUsers().subscribe({
       next: (users) => {
         this.user = users.find(u => u.id === id) || null;
@@ -38,7 +39,7 @@ export class UserDetail implements OnInit {
           this.serverError = 'Usuario no encontrado';
         }
       },
-      error: (err: UserError) => {
+      error: (err: ErrorResponse) => {
         this.loading = false;
         this.serverError = err.userMessage;
       }

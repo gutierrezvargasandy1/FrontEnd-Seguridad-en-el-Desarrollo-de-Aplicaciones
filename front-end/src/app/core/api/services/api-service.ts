@@ -1,4 +1,3 @@
-// app/core/api/services/api.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,7 +7,7 @@ export interface ApiOptions {
   headers?:         HttpHeaders | Record<string, string>;
   params?:          HttpParams  | Record<string, string>;
   withCredentials?: boolean;
-  context?:         HttpContext;  // ← nuevo
+  context?:         HttpContext;  
 }
 
 @Injectable({ providedIn: 'root' })

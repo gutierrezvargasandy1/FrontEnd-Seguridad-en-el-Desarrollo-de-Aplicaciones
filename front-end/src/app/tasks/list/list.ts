@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { TaskService, Task, TaskError } from '../../services/task';
+import { TaskService  } from '../../services/task.service/task';
+import { Task } from '../../services/task.service/interface/task.interface';
+import { ErrorResponse } from '../../services/error-response.interface';
 
 @Component({
   selector: 'app-list',
@@ -27,7 +29,7 @@ export class List implements OnInit {
         this.tasks = tasks;
         this.loading = false;
       },
-      error: (err: TaskError) => {
+      error: (err: ErrorResponse) => {
         this.serverError = err.userMessage;
         this.loading = false;
       }
@@ -43,7 +45,7 @@ export class List implements OnInit {
       next: () => {
         this.loadTasks();
       },
-      error: (err: TaskError) => {
+      error: (err: ErrorResponse) => {
         this.serverError = err.userMessage;
       }
     });

@@ -2,33 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-
-export interface User {
-  id: number;
-  name: string;
-  lastname: string;
-  username: string;
-  created_at: string | Date;
-  hash?: string | null;
-}
-
-export interface CreateUserDto {
-  name: string;
-  lastname: string;
-  username: string;
-  password: string;
-}
-
-export interface UpdateUserDto {
-  name: string;
-  lastname: string;
-  username: string;
-}
-
-export interface UserError {
-  userMessage: string;
-  fieldErrors?: { [key: string]: string };
-}
+import { CreateUserDto } from './interface/create-user-dto.inteface';
+import { User } from './interface/user.interface';
+import { UpdateUserDto } from './interface/update-user-dto.interface';
+import { ErrorResponse } from '../error-response.interface';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -37,19 +14,16 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  // ✅ POST
   createUser(user: CreateUserDto): Observable<User> {
     return this.http.post<User>(`${this.API}`, user, { withCredentials: true })
       .pipe(catchError(err => this.handleUserError(err)));
   }
 
-  // ✅ GET ALL
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.API}`, { withCredentials: true })
       .pipe(catchError(err => this.handleUserError(err)));
   }
 
-  // ✅ GET BY ID
   getUserById(id: number): Observable<User> {
     return this.http.get<User>(`${this.API}/${id}`, { withCredentials: true })
       .pipe(catchError(err => this.handleUserError(err)));
@@ -80,17 +54,17 @@ export class UserService {
         return throwError(() => ({
           userMessage: 'Errores en el formulario',
           fieldErrors
-        } as UserError));
+        } as ErrorResponse));
       }
 
       return throwError(() => ({
         userMessage: normalized.userMessage
-      } as UserError));
+      } as ErrorResponse));
     }
 
     return throwError(() => ({
       userMessage: 'Error en la operación. Intente más tarde.'
-    } as UserError));
+    } as ErrorResponse  ));
   }
 
   private extractFieldErrorsFromOriginal(originalError: any): { [key: string]: string } {
@@ -131,3 +105,4 @@ export class UserService {
     return {};
   }
 }
+

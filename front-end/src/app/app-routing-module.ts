@@ -1,27 +1,19 @@
-// app/app-routing-module.ts
-
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
 import { Login } from './auth/login/login';
 import { Register } from './auth/register/register';
 import { Profile } from './auth/profile/profile';
 import { UpdateUser } from './auth/update-user/update-user';
-
 import { Layout } from './dashboard/layout/layout';
-
 import { List } from './tasks/list/list';
 import { AgregarTarea } from './tasks/agregar-tarea/agregar-tarea';
 import { TareaDetails } from './tasks/tarea-details/tarea-details';
 import { UpdateTask } from './tasks/update-task/update-task';
-
 import { ListaUser } from './users/lista/lista';
 import { CreateUser } from './users/create-user/create-user';
 import { UserDetail } from './users/user-detail/user-detail';
 import { UserUpdate } from './users/user-update/user-update';
-
 import { Lista } from './auditLog/lista/lista';
-
 import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [

@@ -1,11 +1,10 @@
-// app/features/auth/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap, switchMap } from 'rxjs/operators';
 import { HttpContext } from '@angular/common/http';
 import { ApiService } from '../../core/api/services/api-service';
 import { LoginCredentials, RegisterData } from './interface/login-credentials.interface';
-import { User } from '../user';
+import { User } from './interface/user.interface';
 import { JwtHelper } from '../../utils/jwt-helper';
 import { SKIP_LOADING } from '../../core/interceptors/loading.interseptor';
 
@@ -79,10 +78,7 @@ export class Auth {
     return this.api.post<void>(`${this.AUTH_PATH}/logout`, {});
   }
 
-  /**
-   * @param options.skipLoading — pasar true cuando se llama internamente
-   * (después de login/register) para no duplicar el contador del spinner.
-   */
+
   getCurrentUser(options?: { skipLoading?: boolean }): Observable<User> {
     const context = options?.skipLoading
       ? new HttpContext().set(SKIP_LOADING, true)
@@ -181,7 +177,6 @@ export class Auth {
 
     if (token && !this.isTokenExpired()) {
       this.extractRoleFromToken(token);
-      // SKIP_LOADING: la verificación inicial no debe mostrar spinner
       this.getCurrentUser({ skipLoading: true }).subscribe({
         error: () => {
           this.refreshToken().subscribe({

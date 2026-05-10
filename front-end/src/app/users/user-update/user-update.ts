@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
-import { UserService, User, UpdateUserDto, UserError } from '../../services/user';
+import {UserService} from '../../services/user.service/user';
+import { UpdateUserDto } from '../../services/user.service/interface/update-user-dto.interface';
+import { ErrorResponse } from '../../services/error-response.interface';
 
 @Component({
   selector: 'app-user-update',
@@ -21,7 +23,9 @@ export class UserUpdate implements OnInit {
 
   loading = true;
   saving = false;
+
   serverError = '';
+
   fieldErrors: { [key: string]: string } = {};
 
   constructor(
@@ -31,65 +35,141 @@ export class UserUpdate implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.userId = Number(this.route.snapshot.paramMap.get('id'));
+
+    this.userId =
+      Number(this.route.snapshot.paramMap.get('id'));
 
     this.userService.getUsers().subscribe({
+
       next: (users) => {
-        const user = users.find(u => u.id === this.userId);
+
+        const user =
+          users.find(u => u.id === this.userId);
+
         if (!user) {
-          this.serverError = 'Usuario no encontrado';
+
+          this.serverError =
+            'Usuario no encontrado';
+
           this.loading = false;
+
           return;
         }
 
         this.userData = {
+
           name: user.name,
+
           lastname: user.lastname,
+
           username: user.username
         };
 
         this.loading = false;
       },
-      error: (err: UserError) => {
+
+      error: (err: ErrorResponse) => {
+
         this.loading = false;
-        this.serverError = err.userMessage;
+
+        this.serverError =
+          err.userMessage;
       }
     });
   }
 
   updateUser(form: NgForm): void {
-    this.userData.name = this.userData.name?.trim();
-    this.userData.lastname = this.userData.lastname?.trim();
-    this.userData.username = this.userData.username?.trim();
+
+
+    this.userData.name =
+      this.userData.name?.trim();
+
+    this.userData.lastname =
+      this.userData.lastname?.trim();
+
+    this.userData.username =
+      this.userData.username?.trim();
+
 
     this.serverError = '';
+
     this.fieldErrors = {};
 
+
     if (form.invalid) {
+
       form.control.markAllAsTouched();
+
       return;
     }
 
     this.saving = true;
 
-    // 🔥 cuando agregues updateUser al service, solo cambia esta línea
-    this.userService.createUser(this.userData as any).subscribe({
+    this.userService.updateUser(
+      this.userId,
+      this.userData
+    ).subscribe({
+
       next: () => {
+
         this.saving = false;
-        this.router.navigate(['/dashboard/users', this.userId]);
+
+        this.router.navigate([
+          '/dashboard/users',
+          this.userId
+        ]);
       },
-      error: (err: UserError) => {
+
+      error: (err: ErrorResponse) => {
+
         this.saving = false;
+
         if (err.fieldErrors) {
-          this.fieldErrors = err.fieldErrors;
+
+          this.fieldErrors =
+            err.fieldErrors;
+
         } else {
-          this.serverError = err.userMessage;
+
+          this.serverError =
+            err.userMessage;
         }
       }
     });
   }
 
+  trimField(field: string): void {
+
+    switch (field) {
+
+      case 'name':
+
+        this.userData.name =
+          this.userData.name?.trim();
+
+        break;
+
+      case 'lastname':
+
+        this.userData.lastname =
+          this.userData.lastname?.trim();
+
+        break;
+
+      case 'username':
+
+        this.userData.username =
+          this.userData.username?.trim();
+
+        break;
+    }
+  }
+
   goBack(): void {
-    this.router.navigate(['/dashboard/users', this.userId]);
+
+    this.router.navigate([
+      '/dashboard/users',
+      this.userId
+    ]);
   }
 }

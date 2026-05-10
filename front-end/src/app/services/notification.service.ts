@@ -1,4 +1,3 @@
-// app/services/notification.service.ts
 import { Injectable } from '@angular/core';
 
 export type NotificationType = 'success' | 'error' | 'warning' | 'info';

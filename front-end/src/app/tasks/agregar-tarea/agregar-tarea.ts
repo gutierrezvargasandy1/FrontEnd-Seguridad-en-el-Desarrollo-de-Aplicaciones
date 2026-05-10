@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
-import { TaskService, CreateTaskDto, TaskError } from '../../services/task';
+import { TaskService } from '../../services/task.service/task';
+import { CreateTaskDto } from '../../services/task.service/interface/create-task-dto.interface';
+import { ErrorResponse } from '../../services/error-response.interface';
 
 @Component({
   selector: 'app-agregar-tarea',
@@ -52,7 +54,7 @@ export class AgregarTarea {
         form.resetForm();
         setTimeout(() => this.router.navigate(['/dashboard/tasks']), 1000);
       },
-      error: (err: TaskError) => {
+      error: (err: ErrorResponse) => {
         this.loading = false;
         if (err.fieldErrors) {
           this.fieldErrors = err.fieldErrors;

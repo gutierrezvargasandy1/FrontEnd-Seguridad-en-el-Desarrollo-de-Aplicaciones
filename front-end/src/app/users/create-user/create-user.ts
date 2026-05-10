@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UserService, CreateUserDto, UserError } from '../../services/user';
+import { UserService} from '../../services/user.service/user';
+import { CreateUserDto } from '../../services/user.service/interface/create-user-dto.inteface';
+import { ErrorResponse } from '../../services/error-response.interface';
 
 @Component({
   selector: 'app-create-user',
@@ -59,7 +61,7 @@ export class CreateUser {
         this.confirmPassword = '';
         this.router.navigate(['/dashboard/users']);
       },
-      error: (err: UserError) => {
+      error: (err: ErrorResponse) => {
         this.loading = false;
         if (err.fieldErrors) {
           this.fieldErrors = err.fieldErrors;

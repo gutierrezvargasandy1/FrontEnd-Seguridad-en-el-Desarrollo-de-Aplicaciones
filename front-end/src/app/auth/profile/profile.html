@@ -1,6 +1,4 @@
-<!-- app/dashboard/profile/profile.html -->
-<!-- Contenido cuando hay usuario y no hay error -->
-<div class="profile-container" *ngIf="!loading && user && !serverError">
+<div class="profile-container" *ngIf="!loading && user ">
   <div class="detail-header">
     <h2>Mi Perfil</h2>
     <button [routerLink]="['/dashboard/tasks']" class="btn-volver">← Volver</button>
@@ -57,11 +55,4 @@
 
 <!-- Estado de carga -->
 <div *ngIf="loading" class="loading-text">Cargando perfil...</div>
-
-<!-- Error global -->
-<div *ngIf="serverError && !loading" class="msg-error">{{ serverError }}</div>
-
-<!-- Si no hay usuario, no hay carga y no hay error -->
-<div *ngIf="!loading && !user && !serverError" class="msg-error">
-  No se encontró información del perfil.
-</div>
+s

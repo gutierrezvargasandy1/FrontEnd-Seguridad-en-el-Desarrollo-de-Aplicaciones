@@ -4,8 +4,10 @@
 
   <form #userForm="ngForm" (ngSubmit)="updateUser(userForm)">
 
+    <!-- NOMBRE -->
     <div class="form-group">
       <label>Nombre</label>
+
       <input
         type="text"
         name="name"
@@ -13,12 +15,41 @@
         #nameCtrl="ngModel"
         required
         minlength="3"
+        maxlength="50"
+        pattern="[a-zA-ZáéíóúñÑ\s]+"
+        placeholder="Nombre"
+        (blur)="trimField('name')"
       />
-      <small class="msg-error" *ngIf="fieldErrors['name']">{{ fieldErrors['name'] }}</small>
+
+      <div class="error"
+           *ngIf="nameCtrl.invalid && (nameCtrl.touched || userForm.submitted)">
+
+        <small *ngIf="nameCtrl.hasError('required')">
+          El nombre es obligatorio.
+        </small>
+
+        <small *ngIf="nameCtrl.hasError('minlength')">
+          Mínimo 3 caracteres.
+        </small>
+
+        <small *ngIf="nameCtrl.hasError('maxlength')">
+          Máximo 50 caracteres.
+        </small>
+
+        <small *ngIf="nameCtrl.hasError('pattern')">
+          Solo letras y espacios.
+        </small>
+      </div>
+
+      <small class="field-error" *ngIf="fieldErrors['name']">
+        {{ fieldErrors['name'] }}
+      </small>
     </div>
 
+    <!-- APELLIDO -->
     <div class="form-group">
       <label>Apellido</label>
+
       <input
         type="text"
         name="lastname"
@@ -26,36 +57,108 @@
         #lastnameCtrl="ngModel"
         required
         minlength="3"
+        maxlength="50"
+        pattern="[a-zA-ZáéíóúñÑ\s]+"
+        placeholder="Apellido"
+        (blur)="trimField('lastname')"
       />
-      <small class="msg-error" *ngIf="fieldErrors['lastname']">{{ fieldErrors['lastname'] }}</small>
+
+      <div class="error"
+           *ngIf="lastnameCtrl.invalid && (lastnameCtrl.touched || userForm.submitted)">
+
+        <small *ngIf="lastnameCtrl.hasError('required')">
+          El apellido es obligatorio.
+        </small>
+
+        <small *ngIf="lastnameCtrl.hasError('minlength')">
+          Mínimo 3 caracteres.
+        </small>
+
+        <small *ngIf="lastnameCtrl.hasError('maxlength')">
+          Máximo 50 caracteres.
+        </small>
+
+        <small *ngIf="lastnameCtrl.hasError('pattern')">
+          Solo letras y espacios.
+        </small>
+      </div>
+
+      <small class="field-error" *ngIf="fieldErrors['lastname']">
+        {{ fieldErrors['lastname'] }}
+      </small>
     </div>
 
+    <!-- USERNAME -->
     <div class="form-group">
       <label>Correo electrónico</label>
+
       <input
         type="email"
         name="username"
         [(ngModel)]="userData.username"
         #usernameCtrl="ngModel"
         required
+        email
+        minlength="5"
+        maxlength="100"
+        placeholder="usuario@dominio.com"
+        (blur)="trimField('username')"
       />
-      <small class="msg-error" *ngIf="fieldErrors['username']">{{ fieldErrors['username'] }}</small>
+
+      <div class="error"
+           *ngIf="usernameCtrl.invalid && (usernameCtrl.touched || userForm.submitted)">
+
+        <small *ngIf="usernameCtrl.hasError('required')">
+          El correo es obligatorio.
+        </small>
+
+        <small *ngIf="usernameCtrl.hasError('email')">
+          Ingrese un correo válido.
+        </small>
+
+        <small *ngIf="usernameCtrl.hasError('minlength')">
+          Mínimo 5 caracteres.
+        </small>
+
+        <small *ngIf="usernameCtrl.hasError('maxlength')">
+          Máximo 100 caracteres.
+        </small>
+      </div>
+
+      <small class="field-error" *ngIf="fieldErrors['username']">
+        {{ fieldErrors['username'] }}
+      </small>
     </div>
 
+    <!-- BOTONES -->
     <div class="form-actions">
-      <button type="button" (click)="goBack()" class="btn-cancelar">
+
+      <button
+        type="button"
+        (click)="goBack()"
+        class="btn-cancelar">
+
         Cancelar
       </button>
-      <button type="submit" [disabled]="saving" class="btn-guardar">
+
+      <button
+        type="submit"
+        [disabled]="userForm.invalid || saving"
+        class="btn-guardar">
+
         {{ saving ? 'Guardando...' : 'Actualizar' }}
       </button>
+
     </div>
 
-    <div *ngIf="serverError" class="msg-error">{{ serverError }}</div>
+    <!-- ERROR GLOBAL -->
+    <div *ngIf="serverError" class="server-error">
+      {{ serverError }}
+    </div>
 
   </form>
 </div>
 
-<div *ngIf="loading" class="msg-error">
+<div *ngIf="loading" class="loading-message">
   Cargando usuario...
 </div>

@@ -1,39 +1,7 @@
-// audit-log.service.ts
-
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-
-import { ApiService } from '../core/api/services/api-service';
-
-export interface AuditLog {
-
-  id: number;
-
-  userId: number;
-
-  action: string;
-
-  entity: string;
-
-  entityId: number | null;
-
-  oldValue: any | null;
-
-  newValue: any | null;
-
-  createdAt: Date;
-
-  // ================= USER =================
-
-  user?: {
-
-    id: number;
-
-    username: string;
-
-    role: 'ADMIN' | 'CLIENT';
-  };
-}
+import {AuditLog} from '../audit-log.service/interface/auditLog.interface'
+import { ApiService } from '../../core/api/services/api-service';
 
 @Injectable({
   providedIn: 'root'

@@ -1,9 +1,6 @@
-// app/utils/jwt-helper.ts (crear este archivo)
 export class JwtHelper {
   
-  /**
-   * Decodifica un JWT y devuelve su payload
-   */
+
   static decodeToken(token: string): any | null {
     try {
       const parts = token.split('.');

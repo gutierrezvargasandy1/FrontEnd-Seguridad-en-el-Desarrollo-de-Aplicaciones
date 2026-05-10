@@ -1,4 +1,4 @@
-/* styles.scss — GLOBAL */
+/* ================= app.component.css ================= */
 
 * {
   box-sizing: border-box;
@@ -9,12 +9,22 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f4f6f8;
+  margin: 0;
+  padding: 0;
 }
 
-router-outlet + * {
-  display: block;
-  margin-left: 220px;
-  padding: 36px 40px;
-  min-height: 100vh;
-  background-color: #f4f6f8;
+/* ================= RESPONSIVE GLOBAL ================= */
+
+/* Tablets y móviles grandes */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  body {
+    font-size: 13px;
+  }
 }

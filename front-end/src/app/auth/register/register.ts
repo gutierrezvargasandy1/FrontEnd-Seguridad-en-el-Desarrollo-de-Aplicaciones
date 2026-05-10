@@ -1,4 +1,3 @@
-// app/auth/register/register.ts
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
@@ -31,11 +30,9 @@ export class Register {
   ) {}
 
   onRegister(form: NgForm): void {
-    // Limpiar estado previo
     this.serverError = '';
     this.fieldErrors = {};
 
-    // Trim antes de validar
     this.name        = this.name.trim();
     this.lastname    = this.lastname.trim();
     this.username    = this.username.trim();
@@ -64,15 +61,12 @@ export class Register {
         setTimeout(() => this.router.navigate(['/login']), 1200);
       },
       error: (err: AppError) => {
-        // El interceptor ya mostró el toast — aquí solo manejamos
-        // el feedback visual inline del formulario
 
-        // Errores por campo (ej: VALIDATION_ERROR con details)
+
         if (err.fieldErrors) {
           this.fieldErrors = this.normalizeFieldErrors(err.fieldErrors);
         }
 
-        // Mensaje general bajo el formulario — SIEMPRE desde userMessage
         this.serverError = err.userMessage ?? 'Ocurrió un error inesperado.';
       }
     });
@@ -82,10 +76,7 @@ export class Register {
     this[field] = this[field].trim();
   }
 
-  // ----------------------------------------------------------
-  // Convierte Record<string, string | string[]> → Record<string, string>
-  // y mapea el nombre de campo técnico al nombre usado en el template
-  // ----------------------------------------------------------
+
   private normalizeFieldErrors(
     details: Record<string, string | string[]>
   ): Record<string, string> {
@@ -99,14 +90,13 @@ export class Register {
     return result;
   }
 
-  // Mapea el nombre técnico del backend al nombre de la propiedad del template
   private mapFieldName(field: string): string {
     const fieldMap: Record<string, string> = {
       name:     'name',
       lastname: 'lastname',
       username: 'username',
       password: 'password',
-      email:    'username',   // si el backend lo envía como 'email'
+      email:    'username',   
     };
     return fieldMap[field] ?? field;
   }

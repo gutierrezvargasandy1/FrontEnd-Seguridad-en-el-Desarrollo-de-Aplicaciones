@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService, User, UserError } from '../../services/user';
+import { UserService } from '../../services/user.service/user';
+import { User } from '../../services/user.service/interface/user.interface';
+import { ErrorResponse } from '../../services/error-response.interface';
 
 @Component({
   selector: 'app-lista',
@@ -32,7 +34,7 @@ export class ListaUser implements OnInit {
         this.users = users;
         this.loading = false;
       },
-      error: (err: UserError) => {
+      error: (err: ErrorResponse) => {
         this.serverError = err.userMessage;
         this.loading = false;
       }
@@ -45,12 +47,11 @@ export class ListaUser implements OnInit {
 
     this.loading = true;
 
-    // 🔥 cuando agregues deleteUser al service solo cambia esta línea
     this.userService.deleteUser(id).subscribe({
       next: () => {
-        this.getUsers(); // refresca lista
+        this.getUsers(); 
       },
-      error: (err: UserError) => {
+      error: (err: ErrorResponse  ) => {
         this.serverError = err.userMessage;
         this.loading = false;
       }

@@ -1,17 +1,21 @@
-.dashboard {
-  display: flex;
-  min-height: 100vh;
+/* ================= dashboard.component.css ================= */
+
+.dashboard main {
+  flex: 1;
+  margin-left: 220px;
+  padding: 0;
+  min-width: 0;
   background-color: #f4f6f8;
 }
+/* ================= SIDEBAR ================= */
 
 .dashboard nav {
   width: 220px;
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: #fff;
   border-right: 1px solid #e2e2e2;
   display: flex;
   flex-direction: column;
-  padding: 0 0 20px;
   position: fixed;
   top: 0;
   left: 0;
@@ -19,83 +23,93 @@
   z-index: 100;
 }
 
-.dashboard nav::before {
-  content: 'TaskBoard';
-  display: block;
-  font-size: 16px;
-  font-weight: 600;
+.nav-logo {
+  font-size: 20px;
+  font-weight: 700;
   color: #251f81;
-  padding: 28px 20px 24px;
+  padding: 28px 20px;
   border-bottom: 1px solid #eeeeee;
-  margin-bottom: 12px;
 }
 
-.dashboard nav .btn-nav {
-  display: block;
-  padding: 11px 20px;
+.nav-spacer {
+  flex: 1;
+}
+
+/* ================= BOTONES ================= */
+
+.btn-nav,
+.btn-profile,
+.btn-logout {
+  width: 100%;
+  padding: 14px 20px;
   background: none;
   border: none;
   border-left: 3px solid transparent;
   text-align: left;
   font-size: 14px;
-  font-weight: 400;
-  color: #555555;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  width: 100%;
+  transition: 0.2s;
 }
 
-.dashboard nav .btn-nav:hover {
-  background-color: #f5f5f5;
-  color: #1a1a1a;
+.btn-nav {
+  color: #555;
 }
 
-.dashboard nav .btn-nav.active {
+.btn-nav:hover,
+.btn-profile:hover {
+  background: #f5f5f5;
   color: #251f81;
-  background-color: #eeedfe;
-  border-left: 3px solid #251f81;
-  font-weight: 500;
 }
 
-.dashboard hr {
-  display: none;
+.btn-nav.active {
+  background: #eeedfe;
+  color: #251f81;
+  border-left-color: #251f81;
+  font-weight: 600;
 }
 
-.dashboard nav button:not(.btn-nav):not(.btn-profile) {
-  display: block;
-  margin-top: auto;
-  padding: 11px 20px;
-  background: none;
-  border: none;
-  border-left: 3px solid transparent;
-  text-align: left;
-  font-size: 14px;
-  color: #999999;
-  cursor: pointer;
-  width: 100%;
-  transition: background 0.15s, color 0.15s;
+.btn-profile {
+  color: #555;
 }
 
-.dashboard nav button:not(.btn-nav):not(.btn-profile):hover {
-  background-color: #fff0f0;
+.btn-logout {
+  color: #999;
+}
+
+.btn-logout:hover {
+  background: #fff0f0;
   color: #cc3333;
 }
 
-.dashboard nav .btn-profile {
-  display: block;
-  padding: 11px 20px;
-  background: none;
-  border: none;
-  border-left: 3px solid transparent;
-  text-align: left;
-  font-size: 14px;
-  color: #555555;
-  cursor: pointer;
-  width: 100%;
-  transition: background 0.15s, color 0.15s;
+/* ================= CONTENIDO PRINCIPAL ================= */
+
+.dashboard main {
+  flex: 1;
+  margin-left: -220px;  /* ✅ Corregido: antes estaba -120px */
+  padding: 24px;
+  min-width: 0;
+  width: calc(100% - 220px);
+  background-color: #f4f6f8;
 }
 
-.dashboard nav .btn-profile:hover {
-  background-color: #f5f5f5;
-  color: #251f81;
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  .dashboard {
+    flex-direction: column;
+  }
+
+  .dashboard nav {
+    position: relative;
+    width: 100%;
+    min-height: auto;
+    border-right: none;
+    border-bottom: 1px solid #e2e2e2;
+  }
+
+  .dashboard main {
+    margin-left: 0;
+    width: 100%;
+    padding: 16px;
+  }
 }

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgForm } from '@angular/forms';
-import { TaskService, TaskError } from '../../services/task';
+import { TaskService } from '../../services/task.service/task';
+import { ErrorResponse } from '../../services/error-response.interface';
 
 @Component({
   selector: 'app-update-task',
@@ -44,7 +45,7 @@ export class UpdateTask implements OnInit {
         this.description = task.description || '';
         this.priority = task.priority;
       },
-      error: (err: TaskError) => {
+      error: (err: ErrorResponse) => {
         this.serverError = err.userMessage;
       }
     });
@@ -76,7 +77,7 @@ export class UpdateTask implements OnInit {
         this.successMessage = 'Tarea actualizada correctamente';
         setTimeout(() => this.router.navigate(['/dashboard/tasks']), 1000);
       },
-      error: (err: TaskError) => {
+      error: (err: ErrorResponse ) => {
         this.loading = false;
         if (err.fieldErrors) {
           this.fieldErrors = err.fieldErrors;
